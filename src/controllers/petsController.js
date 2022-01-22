@@ -3,15 +3,15 @@ const petsModel = require('../models/petsModel.js');
 const { getAllPets } = petsModel;
 
 const getPets = async (req, res, next) => {
-	try {
-		await getAllPets().then((dbResponse) => {
+	await getAllPets()
+		.then((dbResponse) => {
 			res.send(dbResponse);
+		})
+		.catch((e) => {
+			console.log(e.message);
+			res.sendStatus(500);
+			next(e);
 		});
-	} catch (e) {
-		console.log(e.message);
-		res.sendStatus(500);
-		next(e);
-	}
 };
 
 module.exports = {
