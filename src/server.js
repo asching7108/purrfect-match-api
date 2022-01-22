@@ -11,9 +11,7 @@ const router = express.Router();
 // Automatically parse request body as JSON
 router.use(bodyParser.json());
 
-/**
- * API endpoints
- */ 
+/* API endpoints */ 
 
 // Pets
 router.get('/pets', petsController.getPets);
@@ -22,9 +20,7 @@ router.get('/pets', petsController.getPets);
 
 // Users
 
-/**
- * Start server
- */
+/* Start server */
 app.use('/', router);
 
 const { PORT } = require('./config');
