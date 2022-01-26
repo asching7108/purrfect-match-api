@@ -8,7 +8,7 @@
     "dev": "nodemon src/server.js",
     "test": "mocha --require test/setup.js",
     "predeploy": "npm audit",
-    "deploy": "git push heroku master"
+    "deploy": "git push heroku main"
   },
   "keywords": [],
   "author": "",
@@ -22,7 +22,7 @@
     "mysql": "^2.18.1"
   },
   "devDependencies": {
-    "nodemon": "^2.0.0",
+    "nodemon": "^2.0.15",
     "supertest": "^6.0.1"
   }
 }
