@@ -53,7 +53,7 @@ CREATE TABLE `User` (
  `LastName` varchar(100) not null,
  `EmailAddress` varchar(100) not null,
  `Password` varchar(100) not null,
- `SessionId` varchar(100),
+ `SessionID` varchar(100),
  `Size` varchar(100) not null,
  `Address` varchar(255),
  `ZipCode` int not null,
