@@ -15,6 +15,7 @@ router.use(bodyParser.json());
 
 // Pets
 router.get('/pets', petsController.getPets);
+router.post('/pets', petsController.postPet);
 
 // Shelters
 router.get('/shelters/test', sheltersController.getShelters); //temp route to test database

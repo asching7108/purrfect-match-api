@@ -2,17 +2,52 @@ const db = require("./db.js");
 
 const getAllPets = async () => {
   const sql = 'SELECT * FROM Pet p INNER JOIN Shelter s ON p.ShelterID = s.ShelterID';
-    return new Promise((resolve, reject) => {
-      db.query(sql, (err, res, fields) => {
-        if (err) {
-          console.log(err);
-        } else {
-          resolve(res);
-        }
-      });
+  return new Promise((resolve, reject) => {
+    db.query(sql, (err, res, fields) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(res);
+      }
     });
+  });
 };
 
+const postNewPet = async (newPet) => {
+  const sql = 'INSERT INTO Pet (Name, TypeOfAnimal, Breed, Sex, Age, Size, ShelterID, '
+            + 'Picture, Availability, GoodWithOtherAnimals, GoodWithChildren, '
+            + 'MustBeLeashed, Neutered, Vaccinated, HouseTrained, Description, '
+            + 'LastUpdated) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())';
+  const values = [
+    newPet.Name,
+    newPet.TypeOfAnimal,
+    newPet.Breed,
+    newPet.Sex,
+    newPet.Age,
+    newPet.Size,
+    newPet.ShelterID,
+    newPet.Picture,
+    newPet.Availability,
+    newPet.GoodWithOtherAnimals,
+    newPet.GoodWithChildren,
+    newPet.MustBeLeashed,
+    newPet.Neutered,
+    newPet.Vaccinated,
+    newPet.HouseTrained,
+    newPet.Description
+  ];
+  return new Promise((resolve, reject) => {
+    db.query(sql, values, (err, res, fields) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(res);
+      }
+    });
+  });
+}
+
 module.exports = {
-  getAllPets
+  getAllPets,
+  postNewPet
 };

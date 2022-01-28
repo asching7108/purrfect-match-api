@@ -1,6 +1,6 @@
 const petsModel = require('../models/petsModel.js');
 
-const { getAllPets } = petsModel;
+const { getAllPets, postNewPet } = petsModel;
 
 const getPets = async (req, res, next) => {
   await getAllPets()
@@ -14,6 +14,19 @@ const getPets = async (req, res, next) => {
     });
 };
 
+const postPet = async (req, res, next) => {
+  await postNewPet(req.body.newPet)
+    .then((dbResponse) => {
+      res.send(dbResponse);
+    })
+    .catch((e) => {
+      console.log(e.message);
+      res.sendStatus(500);
+      next(e);
+    });
+};
+
 module.exports = {
-  getPets
+  getPets,
+	postPet
 };
