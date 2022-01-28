@@ -28,5 +28,5 @@ const postPet = async (req, res, next) => {
 
 module.exports = {
   getPets,
-	postPet
+  postPet
 };
