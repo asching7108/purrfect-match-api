@@ -20,7 +20,7 @@ const postShelters = async (req, res, next) => {
 
 	//check all attrs are provided (input validation)
 	var attrs = ["address","emailAddress","password","phoneNumber","shelterName"];
-	if(!inputValidation.hasAllAttrs(req.body, attrs)) res.status(400).send("Please provide required input values");
+	if(!inputValidation.hasAllAttrs(req.body, attrs)) res.status(400).send("Please provide required input attributes");
 	else if(inputValidation.includesNullorEmpty(req.body, ["website"])) res.status(400).send("Please provide required input values");
 	else{
 		await createShelters(req.body)
