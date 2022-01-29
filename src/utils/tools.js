@@ -34,10 +34,10 @@ class inputValidation {
     }
 
     /**
-     * heck all attrs are provided or not
+     * Checks all attrs are provided or not
      * @param {JSON} json User input parameter
      * @param {Array} attrs expected attrs.
-     * @return {boolean} If Json includes null, return true.
+     * @return {boolean} all expected attrs are provided, return true.
      */
     static hasAllAttrs(json, attrs){
         var arr = attrs
