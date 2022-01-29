@@ -1,6 +1,8 @@
+const { json } = require('express');
 const sheltersModel = require('../models/sheltersModel.js');
+const { inputValidation} = require("../utils/tools.js");
 
-const { getAllShelters } = sheltersModel;
+const { getAllShelters, createShelters } = sheltersModel;
 
 const getShelters = async (req, res, next) => {
 	await getAllShelters()
@@ -14,6 +16,24 @@ const getShelters = async (req, res, next) => {
 		});
 };
 
+const postShelters = async (req, res, next) => {
+
+	if(inputValidation.includesNullorEmpty(req.body, ["website"])) res.status(400).send("Please provide required input values");
+	else{
+		await createShelters(req.body)
+		.then((dbResponse) => {
+			res.status(201).send(dbResponse);
+		})
+		.catch((e) => {
+			console.log(e.message);
+			res.status(500);
+			next(e);
+		});
+	}
+
+	
+};
 module.exports = {
-	getShelters
+	getShelters,
+	postShelters
 };

@@ -18,6 +18,7 @@ router.get('/pets', petsController.getPets);
 
 // Shelters
 router.get('/shelters/test', sheltersController.getShelters); //temp route to test database
+router.post('/shelters', sheltersController.postShelters);
 
 // Users
 
