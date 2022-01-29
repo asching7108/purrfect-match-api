@@ -16,8 +16,8 @@ const getAllShelters = async (params) => {
 
 const createShelters = async (params) => {
 
-    var vals = `${SqlUtil.Quote(params.shelterName)}, ${SqlUtil.Quote(params.address)}, ${SqlUtil.Quote(params.emailAddress)},
-     ${SqlUtil.Quote(params.password)}, ${SqlUtil.Quote(params.phoneNumber)}, ${SqlUtil.Quote(params.website)}, ${SqlUtil.Quote(new Date())}`
+    var vals = `${SqlUtil.SQ(params.shelterName)}, ${SqlUtil.SQ(params.address)}, ${SqlUtil.SQ(params.emailAddress)},
+     ${SqlUtil.SQ(params.password)}, ${SqlUtil.SQ(params.phoneNumber)}, ${SqlUtil.SQ(params.website)}, ${SqlUtil.SQ(new Date())}`
 
     const sql = `INSERT INTO Shelter (ShelterName, Address, EmailAddress, Password, PhoneNumber,Website,LastUpdated) 
     VALUES (${vals})`;

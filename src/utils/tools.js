@@ -5,11 +5,11 @@ class SqlUtil {
     }
 
     /**
-     * Returns input with single quates.
+     * Returns input with single quates (SQ).
      * @param {any} input Takes string, int, datetime
      * @return {string} Example: '2022-01-01'
      */
-    static Quote(input){
+    static SQ(input){
         if (typeof input == typeof 0) return "'" + input + "'";
         else if (input instanceof Date) return "'" + input.toISOString().split('T')[0] + "'";
         else return "'" + input + "'";
