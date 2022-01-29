@@ -18,16 +18,11 @@ class SqlUtil {
 
 //Useful tool for validating user inputs
 class inputValidation {
-    constructor(json, exceptions){
-        this.json = json;
-        this.exceptions = exceptions;
-    }
-
     /**
      * Checks if json contains null value or not
      * @param {JSON} json User input parameter
      * @param {Array} exceptions Nullable exceptions.
-     * @return {number} If Json includes null, return true.
+     * @return {boolean} If Json includes null, return true.
      */
     static includesNullorEmpty(json, exceptions = []){       
 
@@ -35,6 +30,27 @@ class inputValidation {
         Object.keys(json).forEach(function(key) {
             if (!exceptions.includes(key) && (!json[key] || json[key] == "")) result = true;
         })
+        return result;
+    }
+
+    /**
+     * heck all attrs are provided or not
+     * @param {JSON} json User input parameter
+     * @param {Array} attrs expected attrs.
+     * @return {boolean} If Json includes null, return true.
+     */
+    static hasAllAttrs(json, attrs){
+        var result;
+        var recieved = []
+        Object.keys(json).forEach(function(key) {
+            recieved.push(key);
+        })
+        recieved.pop("website")
+        recieved.sort();
+        result = (attrs.length == recieved.length) && attrs.every(function(element, index) {
+            return element === recieved[index]; 
+        });
+
         return result;
     }
 }
