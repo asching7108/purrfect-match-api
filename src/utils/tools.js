@@ -40,18 +40,11 @@ class inputValidation {
      * @return {boolean} If Json includes null, return true.
      */
     static hasAllAttrs(json, attrs){
-        var result;
-        var recieved = []
+        var arr = attrs
         Object.keys(json).forEach(function(key) {
-            recieved.push(key);
+            arr.pop(key)
         })
-        recieved.pop("website")
-        recieved.sort();
-        result = (attrs.length == recieved.length) && attrs.every(function(element, index) {
-            return element === recieved[index]; 
-        });
-
-        return result;
+        return arr.length == 0;
     }
 }
 module.exports = {
