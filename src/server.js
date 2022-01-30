@@ -1,15 +1,20 @@
 const app = require('./App');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 const petsController = require('./controllers/petsController');
 const sheltersController = require('./controllers/sheltersController');
 const usersController = require('./controllers/usersController');
+const authController = require('./controllers/authController');
 
 const express = require('express');
 const router = express.Router();
 
 // Automatically parse request body as JSON
 router.use(bodyParser.json());
+
+// allows CORS used in /login
+router.use(cors());
 
 /* API endpoints */ 
 
@@ -20,6 +25,7 @@ router.get('/pets', petsController.getPets);
 router.get('/shelters/test', sheltersController.getShelters); //temp route to test database
 
 // Users
+router.post('/login', authController.login);
 
 /* Start server */
 app.use('/', router);
