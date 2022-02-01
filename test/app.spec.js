@@ -98,5 +98,15 @@ describe('shelters', () => {
       .set('Accept', 'application/json')
       .expect(201)
   });
+
+  it('POST /shelters responds 406 (incorrect content-type)', () => {
+    return supertest(app)
+      .post('/shelters')
+      .send(
+        "shelterName:Shelter Portland1"
+      )
+      .set('content-type', 'text')
+      .expect(406)
+  });
 });
 
