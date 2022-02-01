@@ -5,7 +5,6 @@ const cors = require('cors');
 const petsController = require('./controllers/petsController');
 const sheltersController = require('./controllers/sheltersController');
 const usersController = require('./controllers/usersController');
-const authController = require('./controllers/authController');
 
 const express = require('express');
 const router = express.Router();
@@ -25,7 +24,7 @@ router.get('/pets', petsController.getPets);
 router.get('/shelters/test', sheltersController.getShelters); //temp route to test database
 
 // Users
-router.post('/login', authController.login);
+router.post('/login', usersController.login);
 
 /* Start server */
 app.use('/', router);
