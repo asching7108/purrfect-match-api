@@ -53,7 +53,7 @@ describe('shelters', () => {
         "website": "website.com"
       })
       .set('Accept', 'application/json')
-      .expect(400, "Please provide required input values")
+      .expect(400, '{"ERROR":"[shelterName] cannot be null or empty."}')
   });
 
   it('POST /shelters responds 400 (missing attributes)', () => {
@@ -67,7 +67,7 @@ describe('shelters', () => {
         "website": "website.com"
       })
       .set('Accept', 'application/json')
-      .expect(400, "Please provide required input attributes")
+      .expect(400, '{"ERROR":"Missing required attributes. Expected=[address,emailAddress,password,phoneNumber,shelterName], Recieved=[address,emailAddress,password,phoneNumber,website]"}')
   });
 
   it('POST /shelters responds 201 (website = null)', () => {
@@ -99,14 +99,14 @@ describe('shelters', () => {
       .expect(201)
   });
 
-  it('POST /shelters responds 406 (incorrect content-type)', () => {
+  it('POST /shelters responds 415 (incorrect content-type)', () => {
     return supertest(app)
       .post('/shelters')
       .send(
         "shelterName:Shelter Portland1"
       )
       .set('content-type', 'text')
-      .expect(406)
+      .expect(415,"Unsupported Media Type")
   });
 });
 
