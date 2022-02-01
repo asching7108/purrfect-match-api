@@ -16,8 +16,8 @@ CREATE TABLE `Shelter` (
  `PhoneNumber` int not null,
  `Website` varchar(255),
  `LastUpdated` datetime not null,
-	PRIMARY KEY (`ShelterID`),
-	CONSTRAINT UNIQUE (`Address`,`EmailAddress`,`PhoneNumber`)
+  PRIMARY KEY (`ShelterID`),
+  CONSTRAINT UNIQUE (`Address`,`EmailAddress`,`PhoneNumber`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
@@ -41,8 +41,8 @@ CREATE TABLE `Pet` (
  `Neutered` boolean not null,
  `Vaccinated` boolean not null,
  `HouseTrained` boolean not null, 
-	PRIMARY KEY (`PetID`),
-	CONSTRAINT `ShelterID_fk` FOREIGN KEY (`ShelterID`) REFERENCES `Shelter` (`ShelterID`) ON DELETE CASCADE
+  PRIMARY KEY (`PetID`),
+  CONSTRAINT `ShelterID_fk` FOREIGN KEY (`ShelterID`) REFERENCES `Shelter` (`ShelterID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
@@ -59,8 +59,8 @@ CREATE TABLE `User` (
  `ZipCode` int not null,
  `DistancePreference` int,
  `LastUpdated` datetime not null,
-	PRIMARY KEY (`UserID`),
-	CONSTRAINT UNIQUE (`EmailAddress`)
+  PRIMARY KEY (`UserID`),
+  CONSTRAINT UNIQUE (`EmailAddress`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
@@ -70,8 +70,8 @@ CREATE TABLE `PetNewsItem` (
  `PetID` int not null,
  `NewsItem` varchar(255) not null,
  `DatePosted` datetime not null,
-	PRIMARY KEY (`NewsItemID`),
-	CONSTRAINT `PetID_fk` FOREIGN KEY (`PetID`) REFERENCES `Pet` (`PetID`) ON DELETE CASCADE
+  PRIMARY KEY (`NewsItemID`),
+  CONSTRAINT `PetID_fk` FOREIGN KEY (`PetID`) REFERENCES `Pet` (`PetID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
@@ -81,8 +81,8 @@ CREATE TABLE `UserPreference` (
  `UserID` int not null,
  `PreferenceType` varchar(100) not null,
  `PreferenceSelection` varchar(100) not null,
-	PRIMARY KEY (`UserPreferenceID`),
-	CONSTRAINT `UserID_fk` FOREIGN KEY (`UserID`) REFERENCES `User` (`UserID`) ON DELETE CASCADE
+  PRIMARY KEY (`UserPreferenceID`),
+  CONSTRAINT `UserID_fk` FOREIGN KEY (`UserID`) REFERENCES `User` (`UserID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
@@ -90,6 +90,6 @@ CREATE TABLE `UserPreference` (
 CREATE TABLE `UserPet` (
  `UserID` int not null,
  `PetID` int not null,
-	CONSTRAINT `UserID_fk2` FOREIGN KEY (`UserID`) REFERENCES `User` (`UserID`) ON DELETE CASCADE,
-	CONSTRAINT `PetID_fk2` FOREIGN KEY (`PetID`) REFERENCES `Pet` (`PetID`) ON DELETE CASCADE
+  CONSTRAINT `UserID_fk2` FOREIGN KEY (`UserID`) REFERENCES `User` (`UserID`) ON DELETE CASCADE,
+  CONSTRAINT `PetID_fk2` FOREIGN KEY (`PetID`) REFERENCES `Pet` (`PetID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
