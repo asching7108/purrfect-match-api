@@ -12,9 +12,9 @@ const router = express.Router();
 // Automatically parse request body as JSON
 router.use(bodyParser.json());
 
-/* API endpoints */ 
+/* API endpoints */
 app.get('/', (req, res) => {
-	res.send('Hello, world!');
+  res.send('Hello, world!');
 });
 
 // Pets
