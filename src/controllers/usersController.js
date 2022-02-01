@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-const { SECRET } = require('../config/secret.config');
 const {
 	verifyLoginCredentials,
 	updateUserSession
@@ -24,7 +23,7 @@ const login = async (req, res, next) => {
 				{
 					data: email
 				},
-				SECRET,
+				'notASecret',
 				{ expiresIn: '1h' }
 			);
 
