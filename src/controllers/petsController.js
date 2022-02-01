@@ -5,6 +5,23 @@ const {
   createNewPet
 } = petsModel;
 
+const requiredFields = [
+  'TypeOfAnimal',
+  'Breed',
+  'Sex',
+  'Size',
+  'ShelterID',
+  'Picture',
+  'Availability',
+  'GoodWithOtherAnimals',
+  'GoodWithChildren',
+  'MustBeLeashed',
+  'Neutered',
+  'Vaccinated',
+  'HouseTrained',
+  'Description'
+];
+
 const getPets = async (req, res, next) => {
   await readAllPets()
     .then((dbResponse) => {
@@ -18,9 +35,20 @@ const getPets = async (req, res, next) => {
 };
 
 const postPet = async (req, res, next) => {
-  await createNewPet(req.body.newPet)
+  const { newPet } = req.body;
+  
+  // checks required field
+  for (const field of requiredFields) {
+    if (newPet[field] == null) {
+      return res.status(400).json({
+        error: `Missing '${field}' in request body`
+      });
+    }
+  }
+
+  await createNewPet(newPet)
     .then((dbResponse) => {
-      res.send(dbResponse);
+      res.status(201).send(dbResponse);
     })
     .catch((e) => {
       console.log(e.message);
