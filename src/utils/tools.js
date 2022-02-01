@@ -1,3 +1,5 @@
+const db = require("../models/db.js");
+
 //Useful tool for generating sql query class
 class SqlUtil {
     constructor(str){
@@ -5,14 +7,16 @@ class SqlUtil {
     }
 
     /**
-     * Returns input with single quates (SQ).
+     * Returns input with single quotes (SQ).
      * @param {any} input Takes string, int, datetime
      * @return {string} Example: '2022-01-01'
      */
     static SQ(input){
-        if (typeof input == typeof 0) return "'" + input + "'";
-        else if (input instanceof Date) return "'" + input.toISOString().split('T')[0] + "'";
-        else return "'" + input + "'";
+        if(input == null ) return null;
+        
+        if (typeof input == typeof 0) return "'" + db.escape(input) + "'";
+        else if (input instanceof Date) return "'" + db.escape(input).toISOString().split('T')[0] + "'";
+        else return "'" + db.escape(input) + "'";
     }
 }
 
@@ -42,7 +46,10 @@ class inputValidation {
     static hasAllAttrs(json, attrs){
         var arr = attrs
         Object.keys(json).forEach(function(key) {
-            arr.pop(key)
+            const index = arr.indexOf(key);
+            if (index > -1) {
+                arr.splice(index, 1); 
+            }
         })
         return arr.length == 0;
     }
