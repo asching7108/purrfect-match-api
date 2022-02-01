@@ -27,6 +27,7 @@ class inputValidation {
    * Checks content type
    * @param {req} req response
    * @param {res} res User input parameter
+   * @return {boolean} If error, send status code, error message and return false.
    */
   static checkContentType(req, res){
     var contype = req.headers['content-type'];
@@ -42,7 +43,7 @@ class inputValidation {
    * @param {res} res response
    * @param {JSON} json User input parameter
    * @param {Array} exceptions Nullable exceptions.
-   * @return {boolean} If Json includes null, return true.
+   * @return {boolean} If error, send status code, error message and return false.
    */
   static checkNullorEmpty(res, json, exceptions = []) {
 
@@ -63,7 +64,7 @@ class inputValidation {
    * @param {res} res response
    * @param {JSON} json User input parameter
    * @param {Array} attrs expected attrs.
-   * @return {boolean} all expected attrs are provided, return true.
+   * @return {boolean} If error, send status code, error message and return false.
    */
   static checkAttrs(res, json, attrs) {
     var arr = JSON.parse(JSON.stringify(attrs));
