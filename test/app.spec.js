@@ -1,23 +1,23 @@
 const app = require('../src/server');
 
 describe('App', () => {
-	it('GET / responds with 200 containing "Hello, world!"', () => {
-		return supertest(app)
-			.get('/')
-			.expect(200, 'Hello, world!');
-	});
+  it('GET / responds with 200 containing "Hello, world!"', () => {
+    return supertest(app)
+      .get('/')
+      .expect(200, 'Hello, world!');
+  });
 });
 
 //Shelter -- can't really test well because postShelters is async function
 var r = Math.floor(Math.random() * 10000);
 
 var json = {
-	"shelterName": "Shelter " + r,
-	"address": r + " Dallas, Tx",
-	"emailAddress": r + "Shelter@email.com",
-	"password": "Shelter" + r,
-	"phoneNumber": "0000000000",
-	"website": "www.test.com"
+  "shelterName": "Shelter " + r,
+  "address": r + " Dallas, Tx",
+  "emailAddress": r + "Shelter@email.com",
+  "password": "Shelter" + r,
+  "phoneNumber": "0000000000",
+  "website": "www.test.com"
 }
 // describe('shelters 1', () => {
 // 	it('POST /shelters responds 201', () => {
@@ -60,16 +60,16 @@ var json = {
 // 	});
 // });
 describe('shelters 5', () => {
-	r = Math.floor(Math.random() * 10000);
-	json["address"] = r + " Austin, Tx";
-	json["website"] = null;
-	it('POST /shelters responds 201 (website = null)', () => {
-		return supertest(app)
-			.post('/shelters')
-			.send(json)
-			.set('Accept', 'application/json')
-			.expect(201)
-	});
+  r = Math.floor(Math.random() * 10000);
+  json["address"] = r + " Austin, Tx";
+  json["website"] = null;
+  it('POST /shelters responds 201 (website = null)', () => {
+    return supertest(app)
+      .post('/shelters')
+      .send(json)
+      .set('Accept', 'application/json')
+      .expect(201)
+  });
 });
 // describe('shelters 6', () => {
 // 	r = Math.floor(Math.random() * 10000);
