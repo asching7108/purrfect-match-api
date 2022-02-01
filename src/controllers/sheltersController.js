@@ -1,4 +1,3 @@
-const { json } = require('express');
 const sheltersModel = require('../models/sheltersModel.js');
 const { inputValidation } = require("../utils/tools.js");
 
