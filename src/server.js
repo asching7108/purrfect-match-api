@@ -12,6 +12,9 @@ const router = express.Router();
 router.use(bodyParser.json());
 
 /* API endpoints */ 
+app.get('/', (req, res) => {
+	res.send('Hello, world!');
+});
 
 // Pets
 router.get('/pets', petsController.getPets);
@@ -29,3 +32,5 @@ const { PORT } = require('./config');
 app.listen(PORT, () => {
 	console.log(`Server listening at http://localhost:${PORT}`);
 });
+
+module.exports = app;

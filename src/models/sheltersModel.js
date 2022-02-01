@@ -16,15 +16,20 @@ const getAllShelters = async (params) => {
 
 const createShelters = async (params) => {
 
-    var vals = `${SqlUtil.SQ(params.shelterName)}, ${SqlUtil.SQ(params.address)}, ${SqlUtil.SQ(params.emailAddress)},
-     ${SqlUtil.SQ(params.password)}, ${SqlUtil.SQ(params.phoneNumber)}, ${SqlUtil.SQ(params.website)}, ${SqlUtil.SQ(new Date())}`
-
-    const sql = `INSERT INTO Shelter (ShelterName, Address, EmailAddress, Password, PhoneNumber,Website,LastUpdated) 
-    VALUES (${vals})`;
-    //console.log("Running insert query=" + sql )
+    const sql = 'INSERT INTO Shelter (ShelterName, Address, EmailAddress, Password, PhoneNumber, Website, LastUpdated) '
+    + 'VALUES (?, ?, ?, ?, ?, ?, NOW())';
+    
+    var vals = [
+        params.shelterName,
+        params.address,
+        params.emailAddress,
+        params.password,
+        params.phoneNumber,
+        params.website
+    ];
 
     return new Promise((resolve, reject) => {
-      db.query(sql, (err, res, fields) => {
+      db.query(sql, vals, (err, res, fields) => {
           if (err) {
               reject(err);
           } else {
