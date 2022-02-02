@@ -13,7 +13,7 @@ const login = async (req, res, next) => {
 			// Verify email and password
 			if (dbResponse.length !== 1) {
 				// There should only ever be one user with the same email and pw
-				res.sendStatus(400);
+				res.status(400).send('Bad Request');
 			}
 
 			const userID = dbResponse[0].UserID;
@@ -35,7 +35,7 @@ const login = async (req, res, next) => {
 		})
 		.catch((e) => {
 			console.log(e.message);
-			res.sendStatus(500);
+			res.status(500).send('Server error');
 			next(e);
 		});
 };
