@@ -22,17 +22,16 @@ class SqlUtil {
 
 //Useful tool for validating user inputs
 class inputValidation {
-  
-/**
-   * Checks content type
-   * @param {req} req response
-   * @param {res} res User input parameter
-   * @return {boolean} If error, send status code, error message and return false.
-   */
-  static checkContentType(req, res){
-    var contype = req.headers['content-type'];
+
+  /**
+     * Checks content type
+     * @param {req} req request
+     * @param {res} res User input parameter
+     * @return {boolean} If error, return false.
+     */
+  static checkContentType(req, res) {
+    let contype = req.headers['content-type'];
     if (!contype || contype.indexOf('application/json') !== 0) {
-      res.sendStatus(415);
       return false;
     }
     else return true;
@@ -43,44 +42,35 @@ class inputValidation {
    * @param {res} res response
    * @param {JSON} json User input parameter
    * @param {Array} exceptions Nullable exceptions.
-   * @return {boolean} If error, send status code, error message and return false.
+   * @return {Array} return null or empty items
    */
-  static checkNullorEmpty(res, json, exceptions = []) {
-
-    var errList = [];
+  static getNullorEmpty(res, json, exceptions = []) {
+    let errList = [];
     Object.keys(json).forEach(function (key) {
       if (!exceptions.includes(key) && (!json[key] || json[key] == "")) errList.push(key);
     })
-    
-    if(errList.length != 0) {
-      res.status(400).send({'ERROR':'[' + errList + '] cannot be null or empty.'});
-      return false;
-    }
-    return true;
+    return errList;
   }
 
   /**
    * Checks all attrs are provided or not
    * @param {res} res response
    * @param {JSON} json User input parameter
-   * @param {Array} attrs expected attrs.
-   * @return {boolean} If error, send status code, error message and return false.
+   * @param {Array} expected expected attrs.
+   * @return {Array} return missing attributes
    */
-  static checkAttrs(res, json, attrs) {
-    var arr = JSON.parse(JSON.stringify(attrs));
+  static getMissingAttrs(res, json, expected) {
+    
+    let arr = JSON.parse(JSON.stringify(expected));
     Object.keys(json).forEach(function (key) {
       const index = arr.indexOf(key);
       if (index > -1) {
         arr.splice(index, 1);
       }
     })
-
-    if(arr.length != 0) {
-      res.status(400).send({'ERROR':'Missing required attributes. Expected=[' + attrs + '], Recieved=[' + Object.keys(json) + ']'});
-      return false;
-    }
-    return true;
+    return arr;
   }
+
 }
 module.exports = {
   SqlUtil,

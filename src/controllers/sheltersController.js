@@ -1,6 +1,6 @@
 const sheltersModel = require('../models/sheltersModel.js');
 const { inputValidation } = require("../utils/tools.js");
-
+const { ContentTypeError, PropNullorEmptyError, PropRequiredError } = require("../utils/errors.js");
 const { getAllShelters, createShelters, getShelterByID, deleteShelterByID, updateShelterByID } = sheltersModel;
 
 const getShelters = async (req, res, next) => {
@@ -17,14 +17,20 @@ const getShelters = async (req, res, next) => {
 
 const postShelters = async (req, res, next) => {
 
-  var success = true;
-  //check content type
-  success = inputValidation.checkContentType(req, res);
-  //check all attrs are provided (input validation)
-  var attrs = ["address", "emailAddress", "password", "phoneNumber", "shelterName"];
-  if (success) success = inputValidation.checkAttrs(res, req.body, attrs);
-  //check null values
-  if (success) success = inputValidation.checkNullorEmpty(res, req.body, ["website"]);
+  let success = true;
+  try {
+    //check content type
+    if(!inputValidation.checkContentType(req, res)) throw new ContentTypeError();
+    //check all attrs are provided (input validation)
+    let errList = inputValidation.getMissingAttrs(res, req.body, ["address", "emailAddress", "password", "phoneNumber", "shelterName"])
+    if (errList.length != 0) throw new PropRequiredError(errList);
+    //check null values
+    errList = inputValidation.getNullorEmpty(res, req.body, ["website"]);
+    if (errList.length != 0) throw new PropNullorEmptyError(errList);
+  } catch (err) {
+    success = false;
+    res.status(err.statusCode).send(err.message);
+  }
 
   if (success) {
     await createShelters(req.body)
@@ -55,11 +61,16 @@ const getShelter = async (req, res, next) => {
 };
 
 const updateShelter = async (req, res, next) => {
-  var success = true;
-  //check content type
-  success = inputValidation.checkContentType(req, res);
-  //check null values
-  if (success) success = inputValidation.checkNullorEmpty(res, req.body, ["website"]);
+  let success = true;
+  try {
+    //check content type
+    if(!inputValidation.checkContentType(req, res)) throw new ContentTypeError();
+    //check null values
+    errList = inputValidation.getNullorEmpty(res, req.body, ["website"]);
+  } catch (err) {
+    success = false;
+    res.status(err.statusCode).send(err.message);
+  }
 
   if (success) {
     await updateShelterByID(req.params.shelterID, req.body)

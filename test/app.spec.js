@@ -10,8 +10,8 @@ describe('App', () => {
 
 //Shelter
 //To test, drop all the tables and run sampleDataQueries.sql (you should probably do it in your localhost database)
-describe('shelters', () => {
-  var r = Math.floor(Math.random() * 10000);
+describe('shelters', async () => {
+  let r = Math.floor(Math.random() * 10000);
   it('POST /shelters responds 201', () => {
     return supertest(app)
       .post('/shelters')
@@ -54,7 +54,7 @@ describe('shelters', () => {
         "website": "website.com"
       })
       .set('Accept', 'application/json')
-      .expect(400, '{"ERROR":"[shelterName] cannot be null or empty."}')
+      .expect(400, '[shelterName] cannot be null or empty.')
   });
 
   it('POST /shelters responds 400 (missing attributes)', () => {
@@ -68,7 +68,7 @@ describe('shelters', () => {
         "website": "website.com"
       })
       .set('Accept', 'application/json')
-      .expect(400, '{"ERROR":"Missing required attributes. Expected=[address,emailAddress,password,phoneNumber,shelterName], Recieved=[address,emailAddress,password,phoneNumber,website]"}')
+      .expect(400, 'Missing required attributes = [shelterName]')
   });
 
   it('POST /shelters responds 201 (website = null)', () => {
@@ -107,7 +107,7 @@ describe('shelters', () => {
         "shelterName:Shelter Portland1"
       )
       .set('content-type', 'text')
-      .expect(415, "Unsupported Media Type")
+      .expect(415, "Incorrect content-type.")
   });
 
   it('GET /shelters/:shelterID responds 200', () => {

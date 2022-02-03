@@ -19,7 +19,7 @@ const createShelters = async (params) => {
   const sql = 'INSERT INTO Shelter (ShelterName, Address, EmailAddress, Password, PhoneNumber, Website, LastUpdated) '
     + 'VALUES (?, ?, ?, ?, ?, ?, NOW())';
 
-  var vals = [
+    let vals = [
     params.shelterName,
     params.address,
     params.emailAddress,
@@ -55,8 +55,8 @@ const getShelterByID = async (shelterID) => {
 
 const updateShelterByID = async (shelterID, params) => {
   //get original values
-  var original = await getShelterByID(shelterID);
-  if(original.length == 0) throw new Error('Cannot find shelter data where shelterID=' + shelterID);;
+  let original = await getShelterByID(shelterID);
+  if(original.length == 0) throw new Error('Cannot find shelter data where shelterID=' + shelterID);
   //use coalesce() to avoid 'Column ... cannot be null' error 
   const sql = 'UPDATE Shelter SET ShelterName = coalesce(?, ?), Address = coalesce(?, ?), EmailAddress = coalesce(?, ?), '
   + 'Password = coalesce(?, ?), PhoneNumber = coalesce(?, ?), Website = ?, LastUpdated = NOW() '
