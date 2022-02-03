@@ -42,7 +42,13 @@ const getPets = async (req, res, next) => {
 
 const postPet = async (req, res, next) => {
   const { newPet } = req.body;
+  const contentType = req.headers['content-type'];
   
+  // checks content type
+  if (!contentType || contentType.indexOf('application/json') !== 0) {
+    return res.sendStatus(415);
+  }
+
   // checks all attrs are provided (input validation)
   if (!inputValidation.hasAllAttrs(newPet, requiredFields)) {
     return res.status(400).json({
