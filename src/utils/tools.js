@@ -32,7 +32,7 @@ class inputValidation {
 
     var result = false;
     Object.keys(json).forEach(function (key) {
-      if (!exceptions.includes(key) && (!json[key] || json[key] == "")) result = true;
+      if (!exceptions.includes(key) && (json[key] == null || json[key] === "")) result = true;
     })
     return result;
   }

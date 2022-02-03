@@ -1,4 +1,5 @@
 const petsModel = require('../models/petsModel.js');
+const { inputValidation } = require("../utils/tools.js");
 
 const {
   readAllPets,
@@ -22,6 +23,11 @@ const requiredFields = [
   'Description'
 ];
 
+const optionalFields = [
+  'Name',
+  'Age'
+];
+
 const getPets = async (req, res, next) => {
   await readAllPets()
     .then((dbResponse) => {
@@ -37,13 +43,17 @@ const getPets = async (req, res, next) => {
 const postPet = async (req, res, next) => {
   const { newPet } = req.body;
   
-  // checks required field
-  for (const field of requiredFields) {
-    if (newPet[field] == null) {
-      return res.status(400).json({
-        error: `Missing '${field}' in request body`
-      });
-    }
+  // checks all attrs are provided (input validation)
+  if (!inputValidation.hasAllAttrs(newPet, requiredFields)) {
+    return res.status(400).json({
+      error: "Please provide required input attributes"
+    });
+  }
+  // checks null values
+  if (inputValidation.includesNullorEmpty(newPet, optionalFields)) {
+    return res.status(400).json({
+      error: "Please provide required input values"
+    });
   }
 
   await createNewPet(newPet)

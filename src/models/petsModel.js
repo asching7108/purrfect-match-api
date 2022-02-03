@@ -2,7 +2,8 @@ const db = require("./db.js");
 
 const readAllPets = async () => {
   const sql = 'SELECT p.*, s.ShelterName, s.Address, s.EmailAddress, s.PhoneNumber, s.Website '
-            + 'FROM Pet p INNER JOIN Shelter s ON p.ShelterID = s.ShelterID';
+            + 'FROM Pet p INNER JOIN Shelter s ON p.ShelterID = s.ShelterID '
+            + 'ORDER BY p.PetID';
   return new Promise((resolve, reject) => {
     db.query(sql, (err, res, fields) => {
       if (err) {
