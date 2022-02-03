@@ -10,7 +10,7 @@ describe('App', () => {
 
 //Shelter
 //To test, drop all the tables and run sampleDataQueries.sql (you should probably do it in your localhost database)
-describe('shelters', async () => {
+describe('shelters', () => {
   let r = Math.floor(Math.random() * 10000);
   it('POST /shelters responds 201', () => {
     return supertest(app)
