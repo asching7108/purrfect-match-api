@@ -9,6 +9,7 @@ describe('App', () => {
 });
 
 //Shelter
+//To test, drop all the tables and run sampleDataQueries.sql (you should probably do it in your localhost database)
 describe('shelters', () => {
   var r = Math.floor(Math.random() * 10000);
   it('POST /shelters responds 201', () => {
@@ -106,7 +107,59 @@ describe('shelters', () => {
         "shelterName:Shelter Portland1"
       )
       .set('content-type', 'text')
-      .expect(415,"Unsupported Media Type")
+      .expect(415, "Unsupported Media Type")
+  });
+
+  it('GET /shelters/:shelterID responds 200', () => {
+    return supertest(app)
+      .get('/shelters/1') //<--change it shelterID the database doesn't have it
+      .expect(200);
+  });
+
+  it('GET /shelters/:shelterID responds 404', () => {
+    return supertest(app)
+      .get('/shelters/999999999')
+      .expect(404);
+  });
+
+  it('PATCH /shelters/:shelterID responds 200', () => {
+    return supertest(app)
+      .patch('/shelters/1') //<--change shelterID if the database doesn't have it
+      .send(
+        {
+          "shelterName": "Updated 1",
+          "emailAddress": "Updated@email.com",
+          "password": "Updated12345",
+          "website": "www.Updated.com"
+        }
+      )
+      .expect(200)
+  });
+
+  it('PATCH /shelters/:shelterID responds 500', () => {
+    return supertest(app)
+      .patch('/shelters/999999')
+      .send(
+        {
+          "shelterName": "Updated 1",
+          "emailAddress": "Updated@email.com",
+          "password": "Updated12345",
+          "website": "www.Updated.com"
+        }
+      )
+      .expect(500)
+  });
+
+  it('DELETE /shelters/:shelterID responds 204', () => {
+    return supertest(app)
+      .delete('/shelters/1') //<--change shelterID if the database doesn't have it
+      .expect(204);
+  });
+
+  it('DELETE /shelters/:shelterID responds 404', () => {
+    return supertest(app)
+      .delete('/shelters/999999999')
+      .expect(404);
   });
 });
 
