@@ -19,7 +19,7 @@ const createShelters = async (params) => {
   const sql = 'INSERT INTO Shelter (ShelterName, Address, EmailAddress, Password, PhoneNumber, Website, LastUpdated) '
     + 'VALUES (?, ?, ?, ?, ?, ?, NOW())';
 
-    let vals = [
+  let vals = [
     params.shelterName,
     params.address,
     params.emailAddress,

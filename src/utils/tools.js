@@ -47,7 +47,7 @@ class inputValidation {
   static getNullorEmpty(res, json, exceptions = []) {
     let errList = [];
     Object.keys(json).forEach(function (key) {
-      if (!exceptions.includes(key) && (!json[key] || json[key] == "")) errList.push(key);
+      if (!exceptions.includes(key) && (json[key] == null || json[key] === "")) errList.push(key);
     })
     return errList;
   }

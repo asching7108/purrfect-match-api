@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const petsController = require('./controllers/petsController');
 const sheltersController = require('./controllers/sheltersController');
 const usersController = require('./controllers/usersController');
+const { requireAuth } = require('./utils/auth');
 
 const express = require('express');
 const router = express.Router();
@@ -18,6 +19,7 @@ app.get('/', (req, res) => {
 
 // Pets
 router.get('/pets', petsController.getPets);
+router.post('/pets', requireAuth, petsController.postPet);
 
 // Shelters
 router.get('/shelters/test', sheltersController.getShelters); //temp route to test database
