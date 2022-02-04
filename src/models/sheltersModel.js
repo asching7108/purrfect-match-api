@@ -1,15 +1,19 @@
-const { SqlUtil, inputValidation } = require("../utils/tools.js");
 const db = require("./db.js");
+const mysql = require("mysql");
+const { Logger } = require("../utils/log4js.js");
+const log = Logger();
 
 const getAllShelters = async (params) => {
   const sql = `SELECT * FROM Shelter`;
+  log.debug("Running getAllShelters sql = " + mysql.format(sql));
   return new Promise((resolve, reject) => {
     db.query(sql, (err, res, fields) => {
       if (err) {
         reject(err);
       } else {
-        resolve(res);
+        resolve(fields);
       }
+      
     });
   });
 }
@@ -27,7 +31,7 @@ const createShelters = async (params) => {
     params.phoneNumber,
     params.website
   ];
-
+  log.debug("Running createShelters sql = " + mysql.format(sql, vals));
   return new Promise((resolve, reject) => {
     db.query(sql, vals, (err, res, fields) => {
       if (err) {
@@ -42,6 +46,7 @@ const createShelters = async (params) => {
 const getShelterByID = async (shelterID) => {
 
   const sql = 'SELECT * FROM Shelter WHERE ShelterID = ?';
+  log.debug("Running getShelterByID sql = " + mysql.format(sql, shelterID));
   return new Promise((resolve, reject) => {
     db.query(sql, shelterID, (err, res, fields) => {
       if (err) {
@@ -70,12 +75,13 @@ const updateShelterByID = async (shelterID, params) => {
     params.website,
     shelterID
   ]
+
+  log.debug("Running updateShelterByID sql = " + mysql.format(sql, values));
   return new Promise((resolve, reject) => {
     db.query(sql, values, (err, res, fields) => {
       if (err) {
         reject(err);
       } else {
-        console.log(res)
         resolve(res);
       }
     });
@@ -85,6 +91,7 @@ const updateShelterByID = async (shelterID, params) => {
 const deleteShelterByID = async (shelterID) => {
 
   const sql = 'DELETE FROM Shelter WHERE ShelterID = ?';
+  log.debug("Running updateShelterByID sql = " + mysql.format(sql, shelterID));
   return new Promise((resolve, reject) => {
     db.query(sql, shelterID, (err, res, fields) => {
       if (err) {
