@@ -1,5 +1,6 @@
 const petsModel = require('../models/petsModel.js');
 const { inputValidation } = require("../utils/tools.js");
+const { ContentTypeError, PropNullorEmptyError, PropRequiredError } = require("../utils/errors.js");
 
 const {
   readAllPets,
@@ -42,24 +43,18 @@ const getPets = async (req, res, next) => {
 
 const postPet = async (req, res, next) => {
   const { newPet } = req.body;
-  const contentType = req.headers['content-type'];
-  
-  // checks content type
-  if (!contentType || contentType.indexOf('application/json') !== 0) {
-    return res.sendStatus(415);
-  }
 
-  // checks all attrs are provided (input validation)
-  if (!inputValidation.hasAllAttrs(newPet, requiredFields)) {
-    return res.status(400).json({
-      error: "Please provide required input attributes"
-    });
-  }
-  // checks null values
-  if (inputValidation.includesNullorEmpty(newPet, optionalFields)) {
-    return res.status(400).json({
-      error: "Please provide required input values"
-    });
+  try {
+    // check content type
+    if(!inputValidation.checkContentType(req, res)) throw new ContentTypeError();
+    // check all attrs are provided (input validation)
+    let errList = inputValidation.getMissingAttrs(res, newPet, requiredFields)
+    if (errList.length != 0) throw new PropRequiredError(errList);
+    // check null values
+    errList = inputValidation.getNullorEmpty(res, newPet, optionalFields);
+    if (errList.length != 0) throw new PropNullorEmptyError(errList);
+  } catch (err) {
+    return res.status(err.statusCode).send(err.message);
   }
 
   await createNewPet(newPet)
