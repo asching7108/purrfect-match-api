@@ -22,37 +22,55 @@ class SqlUtil {
 
 //Useful tool for validating user inputs
 class inputValidation {
+
+  /**
+     * Checks content type
+     * @param {req} req request
+     * @param {res} res User input parameter
+     * @return {boolean} If error, return false.
+     */
+  static checkContentType(req, res) {
+    let contype = req.headers['content-type'];
+    if (!contype || contype.indexOf('application/json') !== 0) {
+      return false;
+    }
+    else return true;
+  }
+
   /**
    * Checks if json contains null value or not
+   * @param {res} res response
    * @param {JSON} json User input parameter
    * @param {Array} exceptions Nullable exceptions.
-   * @return {boolean} If Json includes null, return true.
+   * @return {Array} return null or empty items
    */
-  static includesNullorEmpty(json, exceptions = []) {
-
-    var result = false;
+  static getNullorEmpty(res, json, exceptions = []) {
+    let errList = [];
     Object.keys(json).forEach(function (key) {
-      if (!exceptions.includes(key) && (json[key] == null || json[key] === "")) result = true;
+      if (!exceptions.includes(key) && (json[key] == null || json[key] === "")) errList.push(key);
     })
-    return result;
+    return errList;
   }
 
   /**
    * Checks all attrs are provided or not
+   * @param {res} res response
    * @param {JSON} json User input parameter
-   * @param {Array} attrs expected attrs.
-   * @return {boolean} all expected attrs are provided, return true.
+   * @param {Array} expected expected attrs.
+   * @return {Array} return missing attributes
    */
-  static hasAllAttrs(json, attrs) {
-    var arr = attrs
+  static getMissingAttrs(res, json, expected) {
+    
+    let arr = JSON.parse(JSON.stringify(expected));
     Object.keys(json).forEach(function (key) {
       const index = arr.indexOf(key);
       if (index > -1) {
         arr.splice(index, 1);
       }
     })
-    return arr.length == 0;
+    return arr;
   }
+
 }
 module.exports = {
   SqlUtil,

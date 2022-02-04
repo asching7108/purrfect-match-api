@@ -24,6 +24,9 @@ router.post('/pets', requireAuth, petsController.postPet);
 // Shelters
 router.get('/shelters/test', sheltersController.getShelters); //temp route to test database
 router.post('/shelters', sheltersController.postShelters);
+router.get('/shelters/:shelterID', sheltersController.getShelter);
+router.delete('/shelters/:shelterID', sheltersController.deleteShelter);
+router.patch('/shelters/:shelterID', sheltersController.updateShelter);
 
 // Users
 
