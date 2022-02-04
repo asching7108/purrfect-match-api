@@ -13,7 +13,7 @@ const getShelters = async (req, res, next) => {
       res.send(dbResponse);
     })
     .catch((e) => {
-      console.log(e);
+      log.error(e);
       res.sendStatus(500);
       next(e);
     });
@@ -42,7 +42,7 @@ const postShelters = async (req, res, next) => {
         res.status(201).type('json').send(dbResponse);
       })
       .catch((e) => {
-        console.log(e);
+        log.error(e);
         if (e.message.includes("ER_DUP_ENTRY")) res.status(400).send("Duplicate entry");
         else
           res.sendStatus(500);
@@ -59,7 +59,7 @@ const getShelter = async (req, res, next) => {
       else res.send(dbResponse);
     })
     .catch((e) => {
-      console.log(e);
+      log.error(e);
       res.sendStatus(500);
       next(e);
     });
@@ -84,7 +84,7 @@ const updateShelter = async (req, res, next) => {
         res.sendStatus(200);
       })
       .catch((e) => {
-        console.log(e);
+        log.error(e);
         res.sendStatus(500);
         next(e);
       });
@@ -100,12 +100,12 @@ const deleteShelter = async (req, res, next) => {
       if (dbResponse.affectedRows == 0) res.sendStatus(404);
       else if (dbResponse.affectedRows == 1) res.sendStatus(204);
       else {
-        console.log(res);
+        log.error(res);
         res.sendStatus(500);
       }
     })
     .catch((e) => {
-      console.log(e);
+      log.error(e);
       res.sendStatus(500);
       next(e);
     });
