@@ -1,7 +1,7 @@
 const sheltersModel = require('../models/sheltersModel.js');
 const { inputValidation } = require("../utils/tools.js");
 const { ContentTypeError, PropNullorEmptyError, PropRequiredError } = require("../utils/errors.js");
-const { getAllShelters, createShelters, getShelterByID, deleteShelterByID, updateShelterByID } = sheltersModel;
+const { getAllShelters, createShelters, getShelterByID, deleteShelterByID, updateShelterByID, getAllPets } = sheltersModel;
 const { Logger } = require("../utils/log4js.js");
 const log = Logger();
 
@@ -24,7 +24,7 @@ const postShelters = async (req, res, next) => {
   let success = true;
   try {
     //check content type
-    if(!inputValidation.checkContentType(req, res)) throw new ContentTypeError();
+    if (!inputValidation.checkContentType(req, res)) throw new ContentTypeError();
     //check all attrs are provided (input validation)
     let errList = inputValidation.getMissingAttrs(res, req.body, ["address", "emailAddress", "password", "phoneNumber", "shelterName"])
     if (errList.length != 0) throw new PropRequiredError(errList);
@@ -70,7 +70,7 @@ const updateShelter = async (req, res, next) => {
   let success = true;
   try {
     //check content type
-    if(!inputValidation.checkContentType(req, res)) throw new ContentTypeError();
+    if (!inputValidation.checkContentType(req, res)) throw new ContentTypeError();
     //check null values
     errList = inputValidation.getNullorEmpty(res, req.body, ["website"]);
   } catch (err) {
@@ -111,10 +111,25 @@ const deleteShelter = async (req, res, next) => {
     });
 };
 
+const getPets = async (req, res, next) => {
+  log.debug("Calling getPets...");
+  await getAllPets(req.params.shelterID)
+    .then((dbResponse) => {
+      if (dbResponse.length == 0) res.sendStatus(404);
+      else if (dbResponse.length > 0) res.status(200).send(dbResponse);
+    })
+    .catch((e) => {
+      log.error(e);
+      res.sendStatus(500);
+      next(e);
+    });
+};
+
 module.exports = {
   getShelters,
   postShelters,
   getShelter,
   deleteShelter,
-  updateShelter
+  updateShelter,
+  getPets
 };

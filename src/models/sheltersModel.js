@@ -11,9 +11,9 @@ const getAllShelters = async (params) => {
       if (err) {
         reject(err);
       } else {
-        resolve(fields);
+        resolve(res);
       }
-      
+
     });
   });
 }
@@ -61,11 +61,11 @@ const getShelterByID = async (shelterID) => {
 const updateShelterByID = async (shelterID, params) => {
   //get original values
   let original = await getShelterByID(shelterID);
-  if(original.length == 0) throw new Error('Cannot find shelter data where shelterID=' + shelterID);
+  if (original.length == 0) throw new Error('Cannot find shelter data where shelterID=' + shelterID);
   //use coalesce() to avoid 'Column ... cannot be null' error 
   const sql = 'UPDATE Shelter SET ShelterName = coalesce(?, ?), Address = coalesce(?, ?), EmailAddress = coalesce(?, ?), '
-  + 'Password = coalesce(?, ?), PhoneNumber = coalesce(?, ?), Website = ?, LastUpdated = NOW() '
-  + 'WHERE ShelterID = ?;'
+    + 'Password = coalesce(?, ?), PhoneNumber = coalesce(?, ?), Website = ?, LastUpdated = NOW() '
+    + 'WHERE ShelterID = ?;'
   const values = [
     params.shelterName, original[0].ShelterName,
     params.address, original[0].Address,
@@ -103,10 +103,26 @@ const deleteShelterByID = async (shelterID) => {
   });
 }
 
+const getAllPets = async (shelterID) => {
+  const sql = `SELECT * FROM Pet WHERE ShelterID = ?`;
+  log.debug("Running getAllShelters sql = " + mysql.format(sql, shelterID));
+  return new Promise((resolve, reject) => {
+    db.query(sql, shelterID, (err, res, fields) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(res);
+      }
+
+    });
+  });
+}
+
 module.exports = {
   getAllShelters,
   createShelters,
   getShelterByID,
   deleteShelterByID,
-  updateShelterByID
+  updateShelterByID,
+  getAllPets
 };

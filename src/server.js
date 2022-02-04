@@ -30,6 +30,7 @@ router.post('/shelters', sheltersController.postShelters);
 router.get('/shelters/:shelterID', sheltersController.getShelter);
 router.delete('/shelters/:shelterID', sheltersController.deleteShelter);
 router.patch('/shelters/:shelterID', sheltersController.updateShelter);
+router.get('/shelters/:shelterID/pets', sheltersController.getPets);
 
 // Users
 
