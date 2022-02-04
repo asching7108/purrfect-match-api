@@ -6,6 +6,9 @@ const sheltersController = require('./controllers/sheltersController');
 const usersController = require('./controllers/usersController');
 const { requireAuth } = require('./utils/auth');
 
+const { Logger } = require("./utils/log4js.js");
+const log = Logger();
+
 const express = require('express');
 const router = express.Router();
 
@@ -35,7 +38,7 @@ app.use('/', router);
 
 const { PORT } = require('./config');
 app.listen(PORT, () => {
-  console.log(`Server listening at http://localhost:${PORT}`);
+  log.debug(`Server listening at http://localhost:${PORT}`);
 });
 
 module.exports = app;
