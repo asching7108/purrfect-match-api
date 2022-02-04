@@ -19,7 +19,10 @@ app.get('/', (req, res) => {
 
 // Pets
 router.get('/pets', petsController.getPets);
-router.post('/pets', requireAuth, petsController.postPet);
+router.post('/pets', requireAuth, petsController.postPet);  //temp middleware
+router.get('/pets/:petID', petsController.getPet);
+router.delete('/pets/:petID', requireAuth, petsController.deletePet); //temp middleware
+router.patch('/pets/:petID', requireAuth, petsController.patchPet); //temp middleware
 
 // Shelters
 router.get('/shelters/test', sheltersController.getShelters); //temp route to test database
