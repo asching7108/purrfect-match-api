@@ -1,8 +1,5 @@
 const jwt = require('jsonwebtoken');
-const {
-  verifyLoginCredentials,
-  updateUserSession
-} = require('../models/usersModel');
+const { verifyLoginCredentials } = require('../models/usersModel');
 const { SECRET } = require('../config');
 const { inputValidation } = require('../utils/tools');
 
@@ -25,9 +22,7 @@ const login = async (req, res, next) => {
           // There should only ever be one user with the same email and pw
           res.status(401).send('Unauthorized');
         } else {
-          const userID = dbResponse[0].UserID;
-
-          // Create unique session ID (aka jwt)
+          // Create JWT
           const token = jwt.sign(
             {
               data: email
@@ -36,11 +31,8 @@ const login = async (req, res, next) => {
             { expiresIn: '1h' }
           );
 
-          // Save to DB
-          saveUserToken(userID, token).then(() => {
-            // Return token
-            res.send({ token: token });
-          });
+          // Return token
+          res.send({ token: token });
         }
       })
       .catch((e) => {
@@ -49,14 +41,6 @@ const login = async (req, res, next) => {
         next(e);
       });
   }
-};
-
-const saveUserToken = async (userID, token) => {
-  await updateUserSession(userID, token).catch((e) => {
-    console.log(e.message);
-    res.sendStatus(500);
-    next(e);
-  });
 };
 
 module.exports = {
