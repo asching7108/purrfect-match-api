@@ -26,6 +26,21 @@ const createUser = async (params) => {
   });
 }
 
+const getUserByID = async (userID) => {
+
+  const sql = 'SELECT * FROM User WHERE UserID = ?'
+  return new Promise((resolve, reject) => {
+    db.query(sql, userID, (err, res, fields) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(res);
+      }
+    });
+  });
+}
+
 module.exports = {
-  createUser
+  createUser,
+  getUserByID
 }

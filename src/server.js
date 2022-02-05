@@ -29,6 +29,7 @@ router.delete('/shelters/:shelterID', sheltersController.deleteShelter);
 router.patch('/shelters/:shelterID', sheltersController.updateShelter);
 
 // Users
+router.get('/users/:userID', usersController.getUser);
 router.post('/users', usersController.postUsers);
 
 /* Start server */

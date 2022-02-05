@@ -1,5 +1,6 @@
 const {
-  createUser
+  createUser,
+  getUserByID
 } = require('../models/usersModel');
 const { inputValidation } = require("../utils/tools.js");
 const { ContentTypeError, PropNullorEmptyError, PropRequiredError } = require("../utils/errors.js");
@@ -36,6 +37,20 @@ const postUsers = async (req, res, next) => {
   }
 };
 
+const  getUser = async (req, res, next) => {
+  await getUserByID(req.params.userID)
+    .then((dbResponse) => {
+      if (dbResponse.length == 0) res.sendStatus(404);
+      else res.send(dbResponse);
+    })
+    .catch((e) => {
+      console.log(e);
+      res.sendStatus(500);
+      next(e);
+    });
+}
+
 module.exports = {
-  postUsers
+  postUsers,
+  getUser
 };
