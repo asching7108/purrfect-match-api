@@ -20,7 +20,7 @@ const getShelters = async (req, res, next) => {
 };
 
 const postShelters = async (req, res, next) => {
-  log.debug("Calling getShelters...Verifying user inputs...");
+  log.debug("Calling postShelters...Verifying user inputs...");
   let success = true;
   try {
     //check content type
@@ -66,7 +66,7 @@ const getShelter = async (req, res, next) => {
 };
 
 const updateShelter = async (req, res, next) => {
-  log.debug("Calling getShelters...Verifying user inputs...");
+  log.debug("Calling updateShelter...Verifying user inputs...");
   let success = true;
   try {
     //check content type
@@ -113,16 +113,32 @@ const deleteShelter = async (req, res, next) => {
 
 const getPets = async (req, res, next) => {
   log.debug("Calling getPets...");
-  await getAllPets(req.params.shelterID)
+
+  let foundShelter = false;
+  await getShelterByID(req.params.shelterID)
     .then((dbResponse) => {
-      if (dbResponse.length == 0) res.sendStatus(404);
-      else if (dbResponse.length > 0) res.status(200).send(dbResponse);
+      if (dbResponse.length == 0) res.status(404).send("Shelter not found");
+      else foundShelter = true;
     })
     .catch((e) => {
       log.error(e);
       res.sendStatus(500);
       next(e);
     });
+
+  if (foundShelter) {
+    log.debug("Looking for pets for shelterID == " + req.params.shelterID);
+    await getAllPets(req.params.shelterID)
+      .then((dbResponse) => {
+        res.status(200).send(dbResponse);
+      })
+      .catch((e) => {
+        log.error(e);
+        res.sendStatus(500);
+        next(e);
+      });
+  }
+
 };
 
 module.exports = {

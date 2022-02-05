@@ -4,7 +4,7 @@ log4js.configure({
   appenders: {
     out: { type: 'stdout', layout: {
       type: 'pattern',
-      pattern: '%d %[%p%] %f{1} %c %m'
+      pattern: '%d %[%p%] %f{1} %[%c%] %m'
     }}
   },
   categories: { default: { appenders: ['out'], level: 'info', enableCallStack: true } }
