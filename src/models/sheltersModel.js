@@ -44,7 +44,7 @@ const getShelterByID = async (db, shelterID) => {
 
 const updateShelterByID = async (db, shelterID, params) => {
   //get original values
-  let original = await getShelterByID(shelterID);
+  let original = await getShelterByID(db, shelterID);
   if (original.length == 0) throw new Error('Cannot find shelter data where shelterID=' + shelterID);
   //use coalesce() to avoid 'Column ... cannot be null' error 
   const sql = 'UPDATE Shelter SET ShelterName = coalesce(?, ?), Address = coalesce(?, ?), EmailAddress = coalesce(?, ?), '

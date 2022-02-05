@@ -1,9 +1,16 @@
 const app = require('../src/server');
+const { devDb } = require("../src/models/db.js");
 
 //Shelter
 //To test, drop all the tables and run sampleDataQueries.sql (you should probably do it in your localhost database)
 describe('shelters', () => {
+
   let r = Math.floor(Math.random() * 10000);
+
+	before('set db instance', () => {
+    app.set('db', devDb);
+  })
+
   it('POST /shelters responds 201', () => {
     return supertest(app)
       .post('/shelters')
@@ -160,9 +167,9 @@ describe('shelters', () => {
       .expect(200);
   });
 
-  it('GET /shelters/4/pets no pet data responds 200', () => {
+  it('GET /shelters/3/pets no pet data responds 200', () => {
     return supertest(app)
-      .get('/shelters/4/pets') //<--change shelterID if the database doesn't have it
+      .get('/shelters/3/pets') //<--change shelterID if the database doesn't have it
       .expect(200,[]);
   });
 
