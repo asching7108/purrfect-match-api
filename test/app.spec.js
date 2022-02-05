@@ -168,13 +168,13 @@ describe('shelters', () => {
       .expect(200);
   });
 
-  it('GET /shelters/3/pets responds 200', () => {
+  it('GET /shelters/4/pets no pet data responds 200', () => {
     return supertest(app)
-      .get('/shelters/3/pets') //<--change shelterID if the database doesn't have it
+      .get('/shelters/4/pets') //<--change shelterID if the database doesn't have it
       .expect(200,[]);
   });
 
-  it('GET /shelters/9999/pets no pet data 404', () => {
+  it('GET /shelters/9999/pets no shelter 404', () => {
     return supertest(app)
       .get('/shelters/9999/pets') //<--change shelterID if the database doesn't have it
       .expect(404, "Shelter not found");
