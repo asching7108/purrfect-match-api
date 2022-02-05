@@ -43,7 +43,7 @@ const getUserByID = async (userID) => {
 const updateUserByID = async (userID, params) => {
   //get original values
   let original = await getUserByID(userID);
-  if (original.length == 0) throw new Error('Cannot find shelter data where shelterID=' + shelterID);
+  if (original.length == 0) throw new Error('Cannot find user data where userID=' + userID);
 
   const sql = 'UPDATE User SET FirstName = coalesce(?, ?), LastName = coalesce(?, ?), EmailAddress = coalesce(?, ?), '
     + 'Password = coalesce(?, ?), Address = ?, ZipCode = coalesce(?, ?), DistancePreference = ?, LastUpdated = NOW() '
