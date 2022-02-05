@@ -1,23 +1,9 @@
 const sheltersModel = require('../models/sheltersModel.js');
 const { inputValidation } = require("../utils/tools.js");
 const { ContentTypeError, PropNullorEmptyError, PropRequiredError } = require("../utils/errors.js");
-const { getAllShelters, createShelters, getShelterByID, deleteShelterByID, updateShelterByID, getAllPets } = sheltersModel;
+const { createShelters, getShelterByID, deleteShelterByID, updateShelterByID, getAllPets } = sheltersModel;
 const { Logger } = require("../utils/log4js.js");
 const log = Logger();
-
-const getShelters = async (req, res, next) => {
-  log.debug("Calling getShelters...");
-  log.warn("This is warning log...");
-  await getAllShelters()
-    .then((dbResponse) => {
-      res.send(dbResponse);
-    })
-    .catch((e) => {
-      log.error(e);
-      res.sendStatus(500);
-      next(e);
-    });
-};
 
 const postShelters = async (req, res, next) => {
   log.debug("Calling postShelters...Verifying user inputs...");
@@ -142,7 +128,6 @@ const getPets = async (req, res, next) => {
 };
 
 module.exports = {
-  getShelters,
   postShelters,
   getShelter,
   deleteShelter,
