@@ -33,7 +33,7 @@ CREATE TABLE `Pet` (
  `ShelterID` int not null,
  `Picture` varchar(255) not null,
  `Availability` varchar(100) not null,
- `Description` varchar(100) not null,
+ `Description` text not null,
  `LastUpdated` datetime not null,
  `GoodWithOtherAnimals` boolean not null,
  `GoodWithChildren` boolean not null,

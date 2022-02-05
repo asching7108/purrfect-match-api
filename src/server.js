@@ -5,6 +5,10 @@ const cors = require('cors');
 const petsController = require('./controllers/petsController');
 const sheltersController = require('./controllers/sheltersController');
 const usersController = require('./controllers/usersController');
+const { requireAuth } = require('./utils/auth');
+
+const { Logger } = require("./utils/log4js.js");
+const log = Logger();
 
 const express = require('express');
 const router = express.Router();
@@ -22,10 +26,14 @@ app.get('/', (req, res) => {
 
 // Pets
 router.get('/pets', petsController.getPets);
+router.post('/pets', requireAuth, petsController.postPet);
 
 // Shelters
-router.get('/shelters/test', sheltersController.getShelters); //temp route to test database
 router.post('/shelters', sheltersController.postShelters);
+router.get('/shelters/:shelterID', sheltersController.getShelter);
+router.delete('/shelters/:shelterID', sheltersController.deleteShelter);
+router.patch('/shelters/:shelterID', sheltersController.updateShelter);
+router.get('/shelters/:shelterID/pets', sheltersController.getPets);
 
 // Users
 router.post('/login', usersController.login);
@@ -35,7 +43,7 @@ app.use('/', router);
 
 const { PORT } = require('./config');
 app.listen(PORT, () => {
-  console.log(`Server listening at http://localhost:${PORT}`);
+  log.debug(`Server listening at http://localhost:${PORT}`);
 });
 
 module.exports = app;
