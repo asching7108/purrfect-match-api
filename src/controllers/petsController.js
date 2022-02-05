@@ -1,13 +1,15 @@
 const petsModel = require('../models/petsModel.js');
 const { inputValidation } = require("../utils/tools.js");
 const { ContentTypeError, PropNullorEmptyError, PropRequiredError } = require("../utils/errors.js");
+const { Logger } = require("../utils/log4js.js");
+const log = Logger();
 
 const {
   getAllPets,
   createNewPet,
   getPetById,
   deletePetById,
-  patchPetById
+  updatePetById
 } = petsModel;
 
 const requiredFields = [
@@ -33,18 +35,20 @@ const optionalFields = [
 ];
 
 const getPets = async (req, res, next) => {
-  await getAllPets()
+  log.debug("Calling getPets...");
+  await getAllPets(req.app.get('db'))
     .then((dbResponse) => {
       res.send(dbResponse);
     })
     .catch((e) => {
-      console.log(e.message);
+      log.error(e);
       res.sendStatus(500);
       next(e);
     });
 };
 
 const postPet = async (req, res, next) => {
+  log.debug("Calling postPets...Verifying user inputs...");
   const { newPet } = req.body;
 
   try {
@@ -60,20 +64,20 @@ const postPet = async (req, res, next) => {
     return res.status(err.statusCode).send(err.message);
   }
 
-  await createNewPet(newPet)
+  await createNewPet(req.app.get('db'), newPet)
     .then((dbResponse) => {
       res.status(201).send(dbResponse);
     })
     .catch((e) => {
-      console.log(e.message);
+      log.error(e);
       res.sendStatus(500);
       next(e);
     });
 };
 
 const getPet = async (req, res, next) => {
-  console.log(req.params.petID);
-  await getPetById(req.params.petID)
+  log.debug("Calling getPet...");
+  await getPetById(req.app.get('db'), req.params.petID)
     .then((dbResponse) => {
       if (dbResponse.length == 0) {
         return res.sendStatus(404);
@@ -81,14 +85,15 @@ const getPet = async (req, res, next) => {
       res.send(dbResponse[0]);
     })
     .catch((e) => {
-      console.log(e.message);
+      log.error(e);
       res.sendStatus(500);
       next(e);
     });
 };
 
 const deletePet = async (req, res, next) => {
-  await deletePetById(req.params.petID)
+  log.debug("Calling deletePet...");
+  await deletePetById(req.app.get('db'), req.params.petID)
     .then((dbResponse) => {
       if (dbResponse.affectedRows == 0) {
         return res.sendStatus(404);
@@ -96,13 +101,14 @@ const deletePet = async (req, res, next) => {
       res.sendStatus(204);
     })
     .catch((e) => {
-      console.log(e.message);
+      log.error(e);
       res.sendStatus(500);
       next(e);
     });
 };
 
 const patchPet = async (req, res, next) => {
+  log.debug("Calling patchPets...Verifying user inputs...");
   const { petID } = req.params;
   const { petToUpdate } = req.body;
 
@@ -119,7 +125,7 @@ const patchPet = async (req, res, next) => {
     return res.status(err.statusCode).send(err.message);
   }
 
-  await patchPetById(petID, petToUpdate)
+  await updatePetById(req.app.get('db'), petID, petToUpdate)
     .then((dbResponse) => {
       if (dbResponse.affectedRows == 0) {
         return res.sendStatus(404);
@@ -127,7 +133,7 @@ const patchPet = async (req, res, next) => {
       res.send(dbResponse);
     })
     .catch((e) => {
-      console.log(e.message);
+      log.error(e);
       res.sendStatus(500);
       next(e);
     });

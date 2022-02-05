@@ -1,9 +1,12 @@
-const db = require("./db.js");
+const mysql = require("mysql");
+const { Logger } = require("../utils/log4js.js");
+const log = Logger();
 
-const getAllPets = async () => {
+const getAllPets = async (db) => {
   const sql = 'SELECT p.*, s.ShelterName, s.Address, s.EmailAddress, s.PhoneNumber, s.Website '
             + 'FROM Pet p INNER JOIN Shelter s ON p.ShelterID = s.ShelterID '
             + 'ORDER BY p.PetID';
+  log.debug("Running getAllPets sql = " + mysql.format(sql));
   return new Promise((resolve, reject) => {
     db.query(sql, (err, res, fields) => {
       if (err) {
@@ -15,7 +18,7 @@ const getAllPets = async () => {
   });
 };
 
-const createNewPet = async (newPet) => {
+const createNewPet = async (db, newPet) => {
   const sql = 'INSERT INTO Pet (Name, TypeOfAnimal, Breed, Sex, Age, Size, ShelterID, '
             + 'Picture, Availability, GoodWithOtherAnimals, GoodWithChildren, '
             + 'MustBeLeashed, Neutered, Vaccinated, HouseTrained, Description, '
@@ -38,6 +41,7 @@ const createNewPet = async (newPet) => {
     newPet.houseTrained,
     newPet.description
   ];
+  log.debug("Running createNewPet sql = " + mysql.format(sql, values));
   return new Promise((resolve, reject) => {
     db.query(sql, values, (err, res, fields) => {
       if (err) {
@@ -49,11 +53,12 @@ const createNewPet = async (newPet) => {
   });
 }
 
-const getPetById = async (petID) => {
+const getPetById = async (db, petID) => {
   const sql = 'SELECT p.*, s.ShelterName, s.Address, s.EmailAddress, s.PhoneNumber, s.Website '
             + 'FROM Pet p INNER JOIN Shelter s ON p.ShelterID = s.ShelterID '
             + 'WHERE PetID = ?';
   const values = [petID];
+  log.debug("Running getPetById sql = " + mysql.format(sql, values));
   return new Promise((resolve, reject) => {
     db.query(sql, values, (err, res, fields) => {
       if (err) {
@@ -65,9 +70,10 @@ const getPetById = async (petID) => {
   });
 };
 
-const deletePetById = async (petID) => {
+const deletePetById = async (db, petID) => {
   const sql = 'DELETE FROM Pet WHERE PetID = ?';
   const values = [petID];
+  log.debug("Running deletePetById sql = " + mysql.format(sql, values));
   return new Promise((resolve, reject) => {
     db.query(sql, values, (err, res, fields) => {
       if (err) {
@@ -79,7 +85,7 @@ const deletePetById = async (petID) => {
   });
 };
 
-const patchPetById = async (petID, petToUpdate) => {
+const updatePetById = async (db, petID, petToUpdate) => {
   const sql = 'UPDATE Pet SET Name = ?, TypeOfAnimal = ?, Breed = ?, Sex = ?, '
             + 'Age = ?, Size = ?, ShelterID = ?, Picture = ?, Availability = ?, '
             + 'GoodWithOtherAnimals = ?, GoodWithChildren = ?, MustBeLeashed = ?, '
@@ -105,6 +111,7 @@ const patchPetById = async (petID, petToUpdate) => {
     petToUpdate.description,
     petID
   ];
+  log.debug("Running updatePetById sql = " + mysql.format(sql, values));
   return new Promise((resolve, reject) => {
     db.query(sql, values, (err, res, fields) => {
       if (err) {
@@ -121,5 +128,5 @@ module.exports = {
   createNewPet,
   getPetById,
   deletePetById,
-  patchPetById
+  updatePetById
 };

@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const petsController = require('./controllers/petsController');
 const sheltersController = require('./controllers/sheltersController');
 const usersController = require('./controllers/usersController');
+const { db } = require("./models/db.js");
 const { requireAuth } = require('./utils/auth');
 
 const { Logger } = require("./utils/log4js.js");
@@ -38,6 +39,9 @@ router.get('/shelters/:shelterID/pets', sheltersController.getPets);
 
 /* Start server */
 app.use('/', router);
+
+// Configure mySQL DB
+app.set('db', db);
 
 const { PORT } = require('./config');
 app.listen(PORT, () => {
