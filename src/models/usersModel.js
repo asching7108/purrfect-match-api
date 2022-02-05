@@ -49,14 +49,18 @@ const updateUserByID = async (userID, params) => {
     + 'Password = coalesce(?, ?), Address = ?, ZipCode = coalesce(?, ?), DistancePreference = ?, LastUpdated = NOW() '
     + 'WHERE UserID = ?;'
 
+  // Only change optional values is explicitly added in req.body
+  const address = params.hasOwnProperty('address') ? params.address : original[0].Address;
+  const distancePreference = params.hasOwnProperty('distancePreference') ? params.distancePreference : original[0].DistancePreference;
+
   const values = [
     params.firstName, original[0].FirstName,
     params.lastName, original[0].LastName,
     params.emailAddress, original[0].EmailAddress,
     params.password, original[0].Password,
-    params.address,
+    address,
     params.zipCode, original[0].ZipCode,
-    params.distancePreference,
+    distancePreference,
     userID
   ];
 
@@ -65,7 +69,6 @@ const updateUserByID = async (userID, params) => {
       if (err) {
         reject(err);
       } else {
-        console.log(res)
         resolve(res);
       }
     });
