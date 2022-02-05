@@ -161,5 +161,23 @@ describe('shelters', () => {
       .delete('/shelters/999999999')
       .expect(404);
   });
+
+  it('GET /shelters/2/pets responds 200', () => {
+    return supertest(app)
+      .get('/shelters/2/pets') //<--change shelterID if the database doesn't have it
+      .expect(200);
+  });
+
+  it('GET /shelters/4/pets no pet data responds 200', () => {
+    return supertest(app)
+      .get('/shelters/4/pets') //<--change shelterID if the database doesn't have it
+      .expect(200,[]);
+  });
+
+  it('GET /shelters/9999/pets no shelter 404', () => {
+    return supertest(app)
+      .get('/shelters/9999/pets') //<--change shelterID if the database doesn't have it
+      .expect(404, "Shelter not found");
+  });
 });
 
