@@ -114,12 +114,18 @@ const deleteUser = async (req, res, next) => {
 const loginUser = async (req, res, next) => {
 
   // input validation
-  var attrs = ["email", "password"];
-  var contype = req.headers['content-type'];
-  if (!contype || contype.indexOf('application/json') !== 0) res.sendStatus(415);
-  else if (!inputValidation.hasAllAttrs(req.body, attrs)) res.status(400).send("Please provide required input attributes");
-  else if (inputValidation.includesNullorEmpty(req.body)) res.status(400).send("Please provide required input values");
-  else {
+  let success = true;
+  try {
+    //check content type
+    if(!inputValidation.checkContentType(req, res)) throw new ContentTypeError();
+    //check null values
+    errList = inputValidation.getNullorEmpty(res, req.body);
+  } catch (err) {
+    success = false;
+    res.status(err.statusCode).send(err.message);
+  }
+
+  if (success) {
     const { email, password } = req.body;
 
     await verifyLoginCredentials(email, password)
