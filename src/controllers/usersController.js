@@ -127,7 +127,7 @@ const loginUser = async (req, res, next) => {
     if (errList.length != 0) throw new PropRequiredError(errList);
     //check null values
     errList = inputValidation.getNullorEmpty(res, req.body);
-    if (errList.length != 0) throw new PropRequiredError(errList);
+    if (errList.length != 0) throw new PropNullorEmptyError(errList);
   } catch (err) {
     success = false;
     res.status(err.statusCode).send(err.message);
