@@ -1,5 +1,6 @@
 const app = require('./App');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 const petsController = require('./controllers/petsController');
 const sheltersController = require('./controllers/sheltersController');
@@ -15,6 +16,9 @@ const router = express.Router();
 
 // Automatically parse request body as JSON
 router.use(bodyParser.json());
+
+// allows CORS used in /login
+router.use(cors());
 
 /* API endpoints */
 app.get('/', (req, res) => {
@@ -36,6 +40,7 @@ router.patch('/shelters/:shelterID', sheltersController.updateShelter);
 router.get('/shelters/:shelterID/pets', sheltersController.getPets);
 
 // Users
+router.post('/login', usersController.login);
 
 /* Start server */
 app.use('/', router);
