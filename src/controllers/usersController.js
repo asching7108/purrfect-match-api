@@ -14,7 +14,7 @@ const login = async (req, res, next) => {
   else {
     const { email, password } = req.body;
 
-    await verifyLoginCredentials(email, password)
+    await verifyLoginCredentials(req.app.get('db'), email, password)
       .then((dbResponse) => {
 
         // Verify email and password
