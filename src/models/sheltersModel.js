@@ -1,18 +1,7 @@
-const { SqlUtil, inputValidation } = require("../utils/tools.js");
 const db = require("./db.js");
-
-const getAllShelters = async (params) => {
-  const sql = `SELECT * FROM Shelter`;
-  return new Promise((resolve, reject) => {
-    db.query(sql, (err, res, fields) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(res);
-      }
-    });
-  });
-}
+const mysql = require("mysql");
+const { Logger } = require("../utils/log4js.js");
+const log = Logger();
 
 const createShelters = async (params) => {
 
@@ -27,7 +16,7 @@ const createShelters = async (params) => {
     params.phoneNumber,
     params.website
   ];
-
+  log.debug("Running createShelters sql = " + mysql.format(sql, vals));
   return new Promise((resolve, reject) => {
     db.query(sql, vals, (err, res, fields) => {
       if (err) {
@@ -42,6 +31,7 @@ const createShelters = async (params) => {
 const getShelterByID = async (shelterID) => {
 
   const sql = 'SELECT * FROM Shelter WHERE ShelterID = ?';
+  log.debug("Running getShelterByID sql = " + mysql.format(sql, shelterID));
   return new Promise((resolve, reject) => {
     db.query(sql, shelterID, (err, res, fields) => {
       if (err) {
@@ -56,26 +46,29 @@ const getShelterByID = async (shelterID) => {
 const updateShelterByID = async (shelterID, params) => {
   //get original values
   let original = await getShelterByID(shelterID);
-  if(original.length == 0) throw new Error('Cannot find shelter data where shelterID=' + shelterID);
+  if (original.length == 0) throw new Error('Cannot find shelter data where shelterID=' + shelterID);
+
+  const website = params.hasOwnProperty('website') ? params.website : original[0].Website;
   //use coalesce() to avoid 'Column ... cannot be null' error 
   const sql = 'UPDATE Shelter SET ShelterName = coalesce(?, ?), Address = coalesce(?, ?), EmailAddress = coalesce(?, ?), '
-  + 'Password = coalesce(?, ?), PhoneNumber = coalesce(?, ?), Website = ?, LastUpdated = NOW() '
-  + 'WHERE ShelterID = ?;'
+    + 'Password = coalesce(?, ?), PhoneNumber = coalesce(?, ?), Website = ?, LastUpdated = NOW() '
+    + 'WHERE ShelterID = ?;'
   const values = [
     params.shelterName, original[0].ShelterName,
     params.address, original[0].Address,
     params.emailAddress, original[0].EmailAddress,
     params.password, original[0].Password,
     params.phoneNumber, original[0].PhoneNumber,
-    params.website,
+    website,
     shelterID
   ]
+
+  log.debug("Running updateShelterByID sql = " + mysql.format(sql, values));
   return new Promise((resolve, reject) => {
     db.query(sql, values, (err, res, fields) => {
       if (err) {
         reject(err);
       } else {
-        console.log(res)
         resolve(res);
       }
     });
@@ -85,6 +78,7 @@ const updateShelterByID = async (shelterID, params) => {
 const deleteShelterByID = async (shelterID) => {
 
   const sql = 'DELETE FROM Shelter WHERE ShelterID = ?';
+  log.debug("Running updateShelterByID sql = " + mysql.format(sql, shelterID));
   return new Promise((resolve, reject) => {
     db.query(sql, shelterID, (err, res, fields) => {
       if (err) {
@@ -96,10 +90,25 @@ const deleteShelterByID = async (shelterID) => {
   });
 }
 
+const getAllPets = async (shelterID) => {
+  const sql = `SELECT * FROM Pet WHERE ShelterID = ?`;
+  log.debug("Running getAllShelters sql = " + mysql.format(sql, shelterID));
+  return new Promise((resolve, reject) => {
+    db.query(sql, shelterID, (err, res, fields) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(res);
+      }
+
+    });
+  });
+}
+
 module.exports = {
-  getAllShelters,
   createShelters,
   getShelterByID,
   deleteShelterByID,
-  updateShelterByID
+  updateShelterByID,
+  getAllPets
 };
