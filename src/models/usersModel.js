@@ -1,4 +1,6 @@
 const db = require('./db');
+const { Logger } = require("../utils/log4js.js");
+const log = Logger();
 
 const createUser = async (params) => {
 
@@ -14,7 +16,7 @@ const createUser = async (params) => {
     params.zipCode,
     params.distancePreference
   ];
-
+  log.debug("Running createUser sql = " + mysql.format(sql, vals));
   return new Promise((resolve, reject) => {
     db.query(sql, vals, (err, res, fields) => {
       if (err) {
@@ -29,6 +31,7 @@ const createUser = async (params) => {
 const getUserByID = async (userID) => {
 
   const sql = 'SELECT * FROM User WHERE UserID = ?'
+  log.debug("Running getUserByID sql = " + mysql.format(sql, userID));
   return new Promise((resolve, reject) => {
     db.query(sql, userID, (err, res, fields) => {
       if (err) {
@@ -64,6 +67,7 @@ const updateUserByID = async (userID, params) => {
     userID
   ];
 
+  log.debug("Running updateUserByID sql = " + mysql.format(sql, values));
   return new Promise((resolve, reject) => {
     db.query(sql, values, (err, res, fields) => {
       if (err) {
@@ -78,6 +82,7 @@ const updateUserByID = async (userID, params) => {
 const deleteUserByID = async (userID) => {
 
   const sql = 'DELETE FROM User WHERE UserID = ?';
+  log.debug("Running deleteUserByID sql = " + mysql.format(sql, userID));
   return new Promise((resolve, reject) => {
     db.query(sql, userID, (err, res, fields) => {
       if (err) {

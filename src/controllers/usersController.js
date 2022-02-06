@@ -6,9 +6,11 @@ const {
 } = require('../models/usersModel');
 const { inputValidation } = require("../utils/tools.js");
 const { ContentTypeError, PropNullorEmptyError, PropRequiredError } = require("../utils/errors.js");
+const { Logger } = require("../utils/log4js.js");
+const log = Logger();
 
 const postUsers = async (req, res, next) => {
-
+  log.debug("Calling postUsers...Verifying user inputs...");
   let success = true;
   try {
     // content type
@@ -30,7 +32,7 @@ const postUsers = async (req, res, next) => {
         res.status(201).type('json').send(dbResponse);
       })
       .catch((e) => {
-        console.log(e);
+        log.error(e);
         if (e.message.includes("ER_DUP_ENTRY")) res.status(400).send("Duplicate entry");
         else
           res.sendStatus(500);
@@ -40,19 +42,22 @@ const postUsers = async (req, res, next) => {
 };
 
 const getUser = async (req, res, next) => {
+  log.debug("Calling getUser...");
   await getUserByID(req.params.userID)
     .then((dbResponse) => {
       if (dbResponse.length == 0) res.sendStatus(404);
       else res.send(dbResponse);
     })
     .catch((e) => {
-      console.log(e);
+      log.error(e);
       res.sendStatus(500);
       next(e);
     });
 };
 
 const patchUser = async (req, res, next) => {
+  log.debug("Calling patchUser...Verifying user inputs...");
+
   // TODO: add auth
 
   let success = true;
@@ -72,7 +77,7 @@ const patchUser = async (req, res, next) => {
         res.sendStatus(200);
       })
       .catch((e) => {
-        console.log(e);
+        log.error(e);
         res.sendStatus(500);
         next(e);
       });
@@ -80,6 +85,8 @@ const patchUser = async (req, res, next) => {
 }
 
 const deleteUser = async (req, res, next) => {
+  log.debug("Calling deleteUser...");
+
   // TODO: add auth
 
   // UserPet and UserPreference rows are deleted when user is deleted
@@ -88,12 +95,12 @@ const deleteUser = async (req, res, next) => {
       if (dbResponse.affectedRows == 0) res.sendStatus(404);
       else if (dbResponse.affectedRows == 1) res.sendStatus(204);
       else {
-        console.log(res);
+        log.error(res);
         res.sendStatus(500);
       }
     })
     .catch((e) => {
-      console.log(e);
+      log.error(e);
       res.sendStatus(500);
       next(e);
     });
