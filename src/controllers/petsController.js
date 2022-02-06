@@ -13,6 +13,7 @@ const {
 } = petsModel;
 
 const requiredFields = [
+  'test',
   'typeOfAnimal',
   'breed',
   'sex',
@@ -61,7 +62,7 @@ const postPet = async (req, res, next) => {
     errList = inputValidation.getNullorEmpty(res, newPet, optionalFields);
     if (errList.length != 0) throw new PropNullorEmptyError(errList);
   } catch (err) {
-    return res.status(err.statusCode).send(err.message);
+    return res.status(err.statusCode).json({ error: err.message });
   }
 
   await createNewPet(req.app.get('db'), newPet)
@@ -122,7 +123,7 @@ const patchPet = async (req, res, next) => {
     errList = inputValidation.getNullorEmpty(res, petToUpdate, optionalFields);
     if (errList.length != 0) throw new PropNullorEmptyError(errList);
   } catch (err) {
-    return res.status(err.statusCode).send(err.message);
+    return res.status(err.statusCode).json({ error: err.message });
   }
 
   await updatePetById(req.app.get('db'), petID, petToUpdate)
