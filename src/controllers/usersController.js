@@ -2,12 +2,17 @@ const {
   createUser,
   getUserByID,
   updateUserByID,
-  deleteUserByID
+  deleteUserByID,
+  verifyLoginCredentials
 } = require('../models/usersModel');
-const { inputValidation } = require("../utils/tools.js");
+
+const { inputValidation } = require('../utils/tools');
 const { ContentTypeError, PropNullorEmptyError, PropRequiredError } = require("../utils/errors.js");
 const { Logger } = require("../utils/log4js.js");
 const log = Logger();
+const jwt = require('jsonwebtoken');
+const { SECRET } = require('../config');
+
 
 const postUsers = async (req, res, next) => {
   log.debug("Calling postUsers...Verifying user inputs...");
@@ -106,9 +111,50 @@ const deleteUser = async (req, res, next) => {
     });
 }
 
+const loginUser = async (req, res, next) => {
+
+  // input validation
+  var attrs = ["email", "password"];
+  var contype = req.headers['content-type'];
+  if (!contype || contype.indexOf('application/json') !== 0) res.sendStatus(415);
+  else if (!inputValidation.hasAllAttrs(req.body, attrs)) res.status(400).send("Please provide required input attributes");
+  else if (inputValidation.includesNullorEmpty(req.body)) res.status(400).send("Please provide required input values");
+  else {
+    const { email, password } = req.body;
+
+    await verifyLoginCredentials(email, password)
+      .then((dbResponse) => {
+
+        // Verify email and password
+        if (dbResponse.length !== 1) {
+          // There should only ever be one user with the same email and pw
+          res.status(401).send('Unauthorized');
+        } else {
+          // Create JWT
+          const token = jwt.sign(
+            {
+              data: email
+            },
+            SECRET,
+            { expiresIn: '1h' }
+          );
+
+          // Return token
+          res.send({ token: token });
+        }
+      })
+      .catch((e) => {
+        console.log(e.message);
+        res.status(500).send('Server error');
+        next(e);
+      });
+  }
+};
+
 module.exports = {
   postUsers,
   getUser,
   patchUser,
-  deleteUser
-};
+  deleteUser,
+  loginUser
+}
