@@ -68,9 +68,13 @@ const patchUser = async (req, res, next) => {
   let success = true;
   try {
     //check content type
-    if(!inputValidation.checkContentType(req, res)) throw new ContentTypeError();
+    if (!inputValidation.checkContentType(req, res)) throw new ContentTypeError();
+    // all required attributes are provided
+    let errList = inputValidation.getMissingAttrs(res, req.body, ["firstName", "lastName", "email", "password", "zipCode"]);
+    if (errList.length != 0) throw new PropRequiredError(errList);
     //check null values
     errList = inputValidation.getNullorEmpty(res, req.body, ["address", "distancePreference"]);
+    if (errList.length != 0) throw new PropNullorEmptyError(errList);
   } catch (err) {
     success = false;
     res.status(err.statusCode).send(err.message);
@@ -114,12 +118,22 @@ const deleteUser = async (req, res, next) => {
 const loginUser = async (req, res, next) => {
 
   // input validation
-  var attrs = ["email", "password"];
-  var contype = req.headers['content-type'];
-  if (!contype || contype.indexOf('application/json') !== 0) res.sendStatus(415);
-  else if (!inputValidation.hasAllAttrs(req.body, attrs)) res.status(400).send("Please provide required input attributes");
-  else if (inputValidation.includesNullorEmpty(req.body)) res.status(400).send("Please provide required input values");
-  else {
+  let success = true;
+  try {
+    //check content type
+    if (!inputValidation.checkContentType(req, res)) throw new ContentTypeError();
+    // all required attributes are provided
+    let errList = inputValidation.getMissingAttrs(res, req.body, ["email", "password"]);
+    if (errList.length != 0) throw new PropRequiredError(errList);
+    //check null values
+    errList = inputValidation.getNullorEmpty(res, req.body);
+    if (errList.length != 0) throw new PropNullorEmptyError(errList);
+  } catch (err) {
+    success = false;
+    res.status(err.statusCode).send(err.message);
+  }
+
+  if (success) {
     const { email, password } = req.body;
 
     await verifyLoginCredentials(email, password)
