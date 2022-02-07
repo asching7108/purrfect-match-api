@@ -1,9 +1,8 @@
-const db = require('./db');
 const mysql = require('mysql');
 const { Logger } = require("../utils/log4js.js");
 const log = Logger();
 
-const createUser = async (params) => {
+const createUser = async (db, params) => {
 
   const sql = 'INSERT INTO User (FirstName, LastName, EmailAddress, Password, Address, ZipCode, DistancePreference, LastUpdated) '
     + 'VALUES (?, ?, ?, ?, ?, ?, ?, NOW())';
@@ -29,7 +28,7 @@ const createUser = async (params) => {
   });
 }
 
-const getUserByID = async (userID) => {
+const getUserByID = async (db, userID) => {
 
   const sql = 'SELECT * FROM User WHERE UserID = ?'
   log.debug("Running getUserByID sql = " + mysql.format(sql, userID));
@@ -44,9 +43,9 @@ const getUserByID = async (userID) => {
   });
 }
 
-const updateUserByID = async (userID, params) => {
+const updateUserByID = async (db, userID, params) => {
   //get original values
-  let original = await getUserByID(userID);
+  let original = await getUserByID(db, userID);
   if (original.length == 0) throw new Error('Cannot find user data where userID=' + userID);
 
   const sql = 'UPDATE User SET FirstName = coalesce(?, ?), LastName = coalesce(?, ?), EmailAddress = coalesce(?, ?), '
@@ -80,7 +79,7 @@ const updateUserByID = async (userID, params) => {
   });
 }
 
-const deleteUserByID = async (userID) => {
+const deleteUserByID = async (db, userID) => {
 
   const sql = 'DELETE FROM User WHERE UserID = ?';
   log.debug("Running deleteUserByID sql = " + mysql.format(sql, userID));
@@ -95,7 +94,7 @@ const deleteUserByID = async (userID) => {
   });
 }
 
-const verifyLoginCredentials = async (email, password) => {
+const verifyLoginCredentials = async (db, email, password) => {
   const sql = `SELECT UserID FROM User WHERE EmailAddress = ? AND Password = ?`;
   const values = [email, password];
   return new Promise((resolve, reject) => {

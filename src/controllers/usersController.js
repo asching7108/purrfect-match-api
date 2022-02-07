@@ -32,7 +32,7 @@ const postUsers = async (req, res, next) => {
   }
 
   if (success) {
-    await createUser(req.body)
+    await createUser(req.app.get('db'), req.body)
       .then((dbResponse) => {
         res.status(201).type('json').send(dbResponse);
       })
@@ -48,7 +48,7 @@ const postUsers = async (req, res, next) => {
 
 const getUser = async (req, res, next) => {
   log.debug("Calling getUser...");
-  await getUserByID(req.params.userID)
+  await getUserByID(req.app.get('db'), req.params.userID)
     .then((dbResponse) => {
       if (dbResponse.length == 0) res.sendStatus(404);
       else res.send(dbResponse);
@@ -78,7 +78,7 @@ const patchUser = async (req, res, next) => {
   }
 
   if (success) {
-    await updateUserByID(req.params.userID, req.body)
+    await updateUserByID(req.app.get('db'), req.params.userID, req.body)
       .then(() => {
         res.sendStatus(200);
       })
@@ -96,7 +96,7 @@ const deleteUser = async (req, res, next) => {
   // TODO: add auth
 
   // UserPet and UserPreference rows are deleted when user is deleted
-  await deleteUserByID(req.params.userID)
+  await deleteUserByID(req.app.get('db'), req.params.userID)
     .then((dbResponse) => {
       if (dbResponse.affectedRows == 0) res.sendStatus(404);
       else if (dbResponse.affectedRows == 1) res.sendStatus(204);
