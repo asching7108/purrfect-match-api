@@ -40,7 +40,11 @@ router.patch('/shelters/:shelterID', sheltersController.updateShelter);
 router.get('/shelters/:shelterID/pets', sheltersController.getPets);
 
 // Users
-router.post('/login', usersController.login);
+router.post('/login', usersController.loginUser);
+router.post('/users', usersController.postUsers);
+router.get('/users/:userID', usersController.getUser);
+router.patch('/users/:userID', usersController.patchUser);
+router.delete('/users/:userID', usersController.deleteUser);
 
 /* Start server */
 app.use('/', router);

@@ -1,17 +1,136 @@
-const jwt = require('jsonwebtoken');
-const { verifyLoginCredentials } = require('../models/usersModel');
-const { SECRET } = require('../config');
-const { inputValidation } = require('../utils/tools');
+const {
+  createUser,
+  getUserByID,
+  updateUserByID,
+  deleteUserByID,
+  verifyLoginCredentials
+} = require('../models/usersModel');
 
-const login = async (req, res, next) => {
+const { inputValidation } = require('../utils/tools');
+const { ContentTypeError, PropNullorEmptyError, PropRequiredError } = require("../utils/errors.js");
+const { Logger } = require("../utils/log4js.js");
+const log = Logger();
+const jwt = require('jsonwebtoken');
+const { SECRET } = require('../config');
+
+
+const postUsers = async (req, res, next) => {
+  log.debug("Calling postUsers...Verifying user inputs...");
+  let success = true;
+  try {
+    // content type
+    if (!inputValidation.checkContentType(req, res)) throw new ContentTypeError();
+    // all required attributes are provided
+    let errList = inputValidation.getMissingAttrs(res, req.body, ["firstName", "lastName", "email", "password", "zipCode"]);
+    if (errList.length != 0) throw new PropRequiredError(errList);
+    // check null values
+    errList = inputValidation.getNullorEmpty(res, req.body, ["address", "distancePreference"]);
+    if (errList.length != 0) throw new PropNullorEmptyError(errList);
+  } catch (err) {
+    success = false;
+    res.status(err.statusCode).send(err.message);
+  }
+
+  if (success) {
+    await createUser(req.body)
+      .then((dbResponse) => {
+        res.status(201).type('json').send(dbResponse);
+      })
+      .catch((e) => {
+        log.error(e);
+        if (e.message.includes("ER_DUP_ENTRY")) res.status(400).send("Duplicate entry");
+        else
+          res.sendStatus(500);
+        next(e);
+      });
+  }
+};
+
+const getUser = async (req, res, next) => {
+  log.debug("Calling getUser...");
+  await getUserByID(req.params.userID)
+    .then((dbResponse) => {
+      if (dbResponse.length == 0) res.sendStatus(404);
+      else res.send(dbResponse);
+    })
+    .catch((e) => {
+      log.error(e);
+      res.sendStatus(500);
+      next(e);
+    });
+};
+
+const patchUser = async (req, res, next) => {
+  log.debug("Calling patchUser...Verifying user inputs...");
+
+  // TODO: add auth
+
+  let success = true;
+  try {
+    //check content type
+    if (!inputValidation.checkContentType(req, res)) throw new ContentTypeError();
+    //check null values
+    errList = inputValidation.getNullorEmpty(res, req.body, ["address", "distancePreference"]);
+    if (errList.length != 0) throw new PropNullorEmptyError(errList);
+  } catch (err) {
+    success = false;
+    res.status(err.statusCode).send(err.message);
+  }
+
+  if (success) {
+    await updateUserByID(req.params.userID, req.body)
+      .then(() => {
+        res.sendStatus(200);
+      })
+      .catch((e) => {
+        log.error(e);
+        res.sendStatus(500);
+        next(e);
+      });
+  }
+}
+
+const deleteUser = async (req, res, next) => {
+  log.debug("Calling deleteUser...");
+
+  // TODO: add auth
+
+  // UserPet and UserPreference rows are deleted when user is deleted
+  await deleteUserByID(req.params.userID)
+    .then((dbResponse) => {
+      if (dbResponse.affectedRows == 0) res.sendStatus(404);
+      else if (dbResponse.affectedRows == 1) res.sendStatus(204);
+      else {
+        log.error(res);
+        res.sendStatus(500);
+      }
+    })
+    .catch((e) => {
+      log.error(e);
+      res.sendStatus(500);
+      next(e);
+    });
+}
+
+const loginUser = async (req, res, next) => {
 
   // input validation
-  var attrs = ["email", "password"];
-  var contype = req.headers['content-type'];
-  if (!contype || contype.indexOf('application/json') !== 0) res.sendStatus(415);
-  else if (!inputValidation.hasAllAttrs(req.body, attrs)) res.status(400).send("Please provide required input attributes");
-  else if (inputValidation.includesNullorEmpty(req.body)) res.status(400).send("Please provide required input values");
-  else {
+  let success = true;
+  try {
+    //check content type
+    if (!inputValidation.checkContentType(req, res)) throw new ContentTypeError();
+    // all required attributes are provided
+    let errList = inputValidation.getMissingAttrs(res, req.body, ["email", "password"]);
+    if (errList.length != 0) throw new PropRequiredError(errList);
+    //check null values
+    errList = inputValidation.getNullorEmpty(res, req.body);
+    if (errList.length != 0) throw new PropNullorEmptyError(errList);
+  } catch (err) {
+    success = false;
+    res.status(err.statusCode).send(err.message);
+  }
+
+  if (success) {
     const { email, password } = req.body;
 
     await verifyLoginCredentials(req.app.get('db'), email, password)
@@ -44,5 +163,9 @@ const login = async (req, res, next) => {
 };
 
 module.exports = {
-  login
-};
+  postUsers,
+  getUser,
+  patchUser,
+  deleteUser,
+  loginUser
+}
