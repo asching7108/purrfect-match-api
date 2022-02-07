@@ -115,22 +115,28 @@ const patchPet = async (req, res, next) => {
   try {
     // check content type
     if(!inputValidation.checkContentType(req, res)) throw new ContentTypeError();
-    // check all attrs are provided (input validation)
-    let errList = inputValidation.getMissingAttrs(res, petToUpdate, requiredFields)
-    if (errList.length != 0) throw new PropRequiredError(errList);
     // check null values
-    errList = inputValidation.getNullorEmpty(res, petToUpdate, optionalFields);
+    const errList = inputValidation.getNullorEmpty(res, petToUpdate, optionalFields);
     if (errList.length != 0) throw new PropNullorEmptyError(errList);
   } catch (err) {
     return res.status(err.statusCode).json({ error: err.message });
   }
 
-  await updatePetById(req.app.get('db'), petID, petToUpdate)
+  // verify that petID exists and get original values first
+  await getPetById(req.app.get('db'), petID)
     .then((dbResponse) => {
-      if (dbResponse.affectedRows == 0) {
+      if (dbResponse.length == 0) {
         return res.sendStatus(404);
       }
-      res.send(dbResponse);
+      updatePetById(req.app.get('db'), petID, petToUpdate, dbResponse[0])
+        .then(() => {
+          res.sendStatus(200);
+        })
+        .catch((e) => {
+          log.error(e);
+          res.sendStatus(500);
+          next(e);
+        });
     })
     .catch((e) => {
       log.error(e);

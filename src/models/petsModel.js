@@ -85,30 +85,35 @@ const deletePetById = async (db, petID) => {
   });
 };
 
-const updatePetById = async (db, petID, petToUpdate) => {
-  const sql = 'UPDATE Pet SET Name = ?, TypeOfAnimal = ?, Breed = ?, Sex = ?, '
-            + 'Age = ?, Size = ?, ShelterID = ?, Picture = ?, Availability = ?, '
-            + 'GoodWithOtherAnimals = ?, GoodWithChildren = ?, MustBeLeashed = ?, '
-            + 'Neutered = ?, Vaccinated = ?, HouseTrained = ?, Description = ?, ' 
-            + 'LastUpdated = NOW() '
+const updatePetById = async (db, petID, petToUpdate, original) => {
+  const name = petToUpdate.hasOwnProperty('name') ? petToUpdate.name : original.Name;
+  const age = petToUpdate.hasOwnProperty('age') ? petToUpdate.age : original.Age;
+  // use coalesce() to avoid 'Column ... cannot be null' error
+  const sql = 'UPDATE Pet SET Name = ?, TypeOfAnimal = coalesce(?, ?), Breed = coalesce(?, ?), '
+            + 'Sex = coalesce(?, ?), Age = ?, Size = coalesce(?, ?), ShelterID = coalesce(?, ?), '
+            + 'Picture = coalesce(?, ?), Availability = coalesce(?, ?), '
+            + 'GoodWithOtherAnimals = coalesce(?, ?), GoodWithChildren = coalesce(?, ?), '
+            + 'MustBeLeashed = coalesce(?, ?), Neutered = coalesce(?, ?), '
+            + 'Vaccinated = coalesce(?, ?), HouseTrained = coalesce(?, ?), '
+            + 'Description = coalesce(?, ?), LastUpdated = NOW() '
             + 'WHERE PetID = ?';
   const values = [
-    petToUpdate.name,
-    petToUpdate.typeOfAnimal,
-    petToUpdate.breed,
-    petToUpdate.sex,
-    petToUpdate.age,
-    petToUpdate.size,
-    petToUpdate.shelterID,
-    petToUpdate.picture,
-    petToUpdate.availability,
-    petToUpdate.goodWithOtherAnimals,
-    petToUpdate.goodWithChildren,
-    petToUpdate.mustBeLeashed,
-    petToUpdate.neutered,
-    petToUpdate.vaccinated,
-    petToUpdate.houseTrained,
-    petToUpdate.description,
+    name,
+    petToUpdate.typeOfAnimal, original.TypeOfAnimal,
+    petToUpdate.breed, original.Breed,
+    petToUpdate.sex, original.Sex,
+    age,
+    petToUpdate.size, original.Size,
+    petToUpdate.shelterID, original.ShelterID,
+    petToUpdate.picture, original.Picture,
+    petToUpdate.availability, original.Availability,
+    petToUpdate.goodWithOtherAnimals, original.GoodWithOtherAnimals,
+    petToUpdate.goodWithChildren, original.GoodWithChildren,
+    petToUpdate.mustBeLeashed, original.MustBeLeashed,
+    petToUpdate.neutered, original.Neutered,
+    petToUpdate.vaccinated, original.Vaccinated,
+    petToUpdate.houseTrained, original.HouseTrained,
+    petToUpdate.description, original.Description,
     petID
   ];
   log.debug("Running updatePetById sql = " + mysql.format(sql, values));

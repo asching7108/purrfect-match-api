@@ -4,8 +4,6 @@ module.exports = {
   PORT: '3306',
   USER: "[YOUR_USERNAME]",
   PASSWORD: "[YOUR_PASSWORD]",
-  USER: "esther",
-  PASSWORD: "P@ssw0rd",
   DB: "purrfect-match_dev",
   DEV_HOST: "localhost",
   DEV_PORT: '3306',
