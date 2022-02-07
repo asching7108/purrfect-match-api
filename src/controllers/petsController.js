@@ -13,7 +13,6 @@ const {
 } = petsModel;
 
 const requiredFields = [
-  'test',
   'typeOfAnimal',
   'breed',
   'sex',
