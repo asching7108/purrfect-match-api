@@ -1,4 +1,5 @@
 const db = require('./db');
+const mysql = require('mysql');
 const { Logger } = require("../utils/log4js.js");
 const log = Logger();
 

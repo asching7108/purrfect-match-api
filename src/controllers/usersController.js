@@ -69,9 +69,6 @@ const patchUser = async (req, res, next) => {
   try {
     //check content type
     if (!inputValidation.checkContentType(req, res)) throw new ContentTypeError();
-    // all required attributes are provided
-    let errList = inputValidation.getMissingAttrs(res, req.body, ["firstName", "lastName", "email", "password", "zipCode"]);
-    if (errList.length != 0) throw new PropRequiredError(errList);
     //check null values
     errList = inputValidation.getNullorEmpty(res, req.body, ["address", "distancePreference"]);
     if (errList.length != 0) throw new PropNullorEmptyError(errList);
