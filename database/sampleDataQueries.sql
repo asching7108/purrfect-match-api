@@ -1,6 +1,7 @@
 SET FOREIGN_KEY_CHECKS = 0;
 TRUNCATE Shelter;
 TRUNCATE Pet;
+TRUNCATE User;
 SET FOREIGN_KEY_CHECKS = 1;
 
 INSERT INTO Shelter (ShelterName, Address, EmailAddress, Password, PhoneNumber, Website, LastUpdated)
@@ -16,3 +17,7 @@ VALUES
    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed blandit facilisis elit, id volutpat dolor porttitor sed. Proin erat diam, venenatis ac lacinia a, condimentum ac turpis. Fusce eu nisl tempor, feugiat neque vitae, tincidunt est.'),
   ('Adeline', 'Cat', 'Domestic Shorthair', 'Female', 2, 'Small, 8.8lbs', 2, '', 'Available', '2022-01-27 12:32:05', 0, 0, 0, 1, 1, 1,
    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed blandit facilisis elit, id volutpat dolor porttitor sed. Proin erat diam, venenatis ac lacinia a, condimentum ac turpis. Fusce eu nisl tempor, feugiat neque vitae, tincidunt est.');
+
+INSERT INTO User (FirstName, LastName, EmailAddress, Password, Address, ZipCode, DistancePreference, LastUpdated)
+VALUES
+  ('Esther', 'Lin', 'linhsin@oregonstate.edu', 'password', NULL, 10001, NULL, '2022-01-27 12:32:05');

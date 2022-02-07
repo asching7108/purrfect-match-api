@@ -1,9 +1,8 @@
-const db = require("./db.js");
 const mysql = require("mysql");
 const { Logger } = require("../utils/log4js.js");
 const log = Logger();
 
-const createShelters = async (params) => {
+const createShelters = async (db, params) => {
 
   const sql = 'INSERT INTO Shelter (ShelterName, Address, EmailAddress, Password, PhoneNumber, Website, LastUpdated) '
     + 'VALUES (?, ?, ?, ?, ?, ?, NOW())';
@@ -28,7 +27,7 @@ const createShelters = async (params) => {
   });
 }
 
-const getShelterByID = async (shelterID) => {
+const getShelterByID = async (db, shelterID) => {
 
   const sql = 'SELECT * FROM Shelter WHERE ShelterID = ?';
   log.debug("Running getShelterByID sql = " + mysql.format(sql, shelterID));
@@ -43,9 +42,9 @@ const getShelterByID = async (shelterID) => {
   });
 }
 
-const updateShelterByID = async (shelterID, params) => {
+const updateShelterByID = async (db, shelterID, params) => {
   //get original values
-  let original = await getShelterByID(shelterID);
+  let original = await getShelterByID(db, shelterID);
   if (original.length == 0) throw new Error('Cannot find shelter data where shelterID=' + shelterID);
 
   const website = params.hasOwnProperty('website') ? params.website : original[0].Website;
@@ -75,7 +74,7 @@ const updateShelterByID = async (shelterID, params) => {
   });
 }
 
-const deleteShelterByID = async (shelterID) => {
+const deleteShelterByID = async (db, shelterID) => {
 
   const sql = 'DELETE FROM Shelter WHERE ShelterID = ?';
   log.debug("Running updateShelterByID sql = " + mysql.format(sql, shelterID));
@@ -90,7 +89,7 @@ const deleteShelterByID = async (shelterID) => {
   });
 }
 
-const getAllPets = async (shelterID) => {
+const getAllPets = async (db, shelterID) => {
   const sql = `SELECT * FROM Pet WHERE ShelterID = ?`;
   log.debug("Running getAllShelters sql = " + mysql.format(sql, shelterID));
   return new Promise((resolve, reject) => {

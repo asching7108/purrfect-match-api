@@ -5,6 +5,7 @@ const cors = require('cors');
 const petsController = require('./controllers/petsController');
 const sheltersController = require('./controllers/sheltersController');
 const usersController = require('./controllers/usersController');
+const { db } = require("./models/db.js");
 const { requireAuth } = require('./utils/auth');
 
 const { Logger } = require("./utils/log4js.js");
@@ -26,7 +27,10 @@ app.get('/', (req, res) => {
 
 // Pets
 router.get('/pets', petsController.getPets);
-router.post('/pets', requireAuth, petsController.postPet);
+router.post('/pets', requireAuth, petsController.postPet);  //temp middleware
+router.get('/pets/:petID', petsController.getPet);
+router.delete('/pets/:petID', requireAuth, petsController.deletePet); //temp middleware
+router.patch('/pets/:petID', requireAuth, petsController.patchPet); //temp middleware
 
 // Shelters
 router.post('/shelters', sheltersController.postShelters);
@@ -44,6 +48,9 @@ router.delete('/users/:userID', usersController.deleteUser);
 
 /* Start server */
 app.use('/', router);
+
+// Configure mySQL DB
+app.set('db', db);
 
 const { PORT } = require('./config');
 app.listen(PORT, () => {
