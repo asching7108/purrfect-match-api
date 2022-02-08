@@ -1,7 +1,7 @@
 const sheltersModel = require('../models/sheltersModel.js');
 const { inputValidation } = require("../utils/tools.js");
 const { ContentTypeError, PropNullorEmptyError, PropRequiredError } = require("../utils/errors.js");
-const { createShelters, getShelterByID, deleteShelterByID, updateShelterByID, getAllPets } = sheltersModel;
+const { createShelters, getShelterByID, deleteShelterByID, updateShelterByID, getAllPets, verifyShelterLoginCredentials } = sheltersModel;
 const { Logger } = require("../utils/log4js.js");
 const log = Logger();
 
@@ -127,10 +127,61 @@ const getPets = async (req, res, next) => {
 
 };
 
+const loginShelter = async (req, res, next) => {
+
+  // input validation
+  let success = true;
+  try {
+    //check content type
+    if (!inputValidation.checkContentType(req, res)) throw new ContentTypeError();
+    // all required attributes are provided
+    let errList = inputValidation.getMissingAttrs(res, req.body, ["email", "password"]);
+    if (errList.length != 0) throw new PropRequiredError(errList);
+    //check null values
+    errList = inputValidation.getNullorEmpty(res, req.body);
+    if (errList.length != 0) throw new PropNullorEmptyError(errList);
+  } catch (err) {
+    success = false;
+    res.status(err.statusCode).send(err.message);
+  }
+
+  if (success) {
+    const { email, password } = req.body;
+
+    await verifyShelterLoginCredentials(req.app.get('db'), email, password)
+      .then((dbResponse) => {
+
+        // Verify email and password
+        if (dbResponse.length !== 1) {
+          // There should only ever be one shelter with the same email and pw
+          res.status(401).send('Unauthorized');
+        } else {
+          // Create JWT
+          const token = jwt.sign(
+            {
+              shelterID: dbResponse[0].ShelterID
+            },
+            SECRET,
+            { expiresIn: '1h' }
+          );
+
+          // Return token
+          res.send({ token: token });
+        }
+      })
+      .catch((e) => {
+        console.log(e.message);
+        res.status(500).send('Server error');
+        next(e);
+      });
+  }
+};
+
 module.exports = {
   postShelters,
   getShelter,
   deleteShelter,
   updateShelter,
-  getPets
+  getPets,
+  loginShelter
 };
