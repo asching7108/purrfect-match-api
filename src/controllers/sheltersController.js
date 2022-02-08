@@ -4,6 +4,8 @@ const { ContentTypeError, PropNullorEmptyError, PropRequiredError } = require(".
 const { createShelters, getShelterByID, deleteShelterByID, updateShelterByID, getAllPets, verifyShelterLoginCredentials } = sheltersModel;
 const { Logger } = require("../utils/log4js.js");
 const log = Logger();
+const jwt = require('jsonwebtoken');
+const { SECRET } = require('../config');
 
 const postShelters = async (req, res, next) => {
   log.debug("Calling postShelters...Verifying user inputs...");
