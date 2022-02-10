@@ -104,10 +104,25 @@ const getAllPets = async (db, shelterID) => {
   });
 }
 
+const verifyShelterLoginCredentials = async (db, email, password) => {
+  const sql = `SELECT ShelterID FROM Shelter WHERE EmailAddress = ? AND Password = ?`;
+  const values = [email, password];
+  return new Promise((resolve, reject) => {
+    db.query(sql, values, (err, res, fields) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(res);
+      }
+    });
+  });
+}
+
 module.exports = {
   createShelters,
   getShelterByID,
   deleteShelterByID,
   updateShelterByID,
-  getAllPets
+  getAllPets,
+  verifyShelterLoginCredentials
 };
