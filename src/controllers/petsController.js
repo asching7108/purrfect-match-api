@@ -42,35 +42,35 @@ const getPets = async (req, res, next) => {
     })
     .catch((e) => {
       log.error(e);
-      res.sendStatus(500);
+      res.status(500).json({ error: e.message });
       next(e);
     });
 };
 
 const postPet = async (req, res, next) => {
   log.debug("Calling postPets...Verifying user inputs...");
-  const { newPet } = req.body;
 
   try {
     // check content type
     if(!inputValidation.checkContentType(req, res)) throw new ContentTypeError();
     // check all attrs are provided (input validation)
-    let errList = inputValidation.getMissingAttrs(res, newPet, requiredFields)
+    let errList = inputValidation.getMissingAttrs(res, req.body, requiredFields)
     if (errList.length != 0) throw new PropRequiredError(errList);
     // check null values
-    errList = inputValidation.getNullorEmpty(res, newPet, optionalFields);
+    errList = inputValidation.getNullorEmpty(res, req.body, optionalFields);
     if (errList.length != 0) throw new PropNullorEmptyError(errList);
   } catch (err) {
+    console.log(err);
     return res.status(err.statusCode).json({ error: err.message });
   }
 
-  await createNewPet(req.app.get('db'), newPet)
+  await createNewPet(req.app.get('db'), req.body)
     .then((dbResponse) => {
       res.status(201).send(dbResponse);
     })
     .catch((e) => {
       log.error(e);
-      res.sendStatus(500);
+      res.status(500).json({ error: e.message });
       next(e);
     });
 };
@@ -80,13 +80,13 @@ const getPet = async (req, res, next) => {
   await getPetById(req.app.get('db'), req.params.petID)
     .then((dbResponse) => {
       if (dbResponse.length == 0) {
-        return res.sendStatus(404);
+        return res.status(404).json({ error: "Pet not found." });
       }
       res.send(dbResponse[0]);
     })
     .catch((e) => {
       log.error(e);
-      res.sendStatus(500);
+      res.status(500).json({ error: e.message });
       next(e);
     });
 };
@@ -96,13 +96,13 @@ const deletePet = async (req, res, next) => {
   await deletePetById(req.app.get('db'), req.params.petID)
     .then((dbResponse) => {
       if (dbResponse.affectedRows == 0) {
-        return res.sendStatus(404);
+        return res.status(404).json({ error: "Pet not found." });
       }
       res.sendStatus(204);
     })
     .catch((e) => {
       log.error(e);
-      res.sendStatus(500);
+      res.status(500).json({ error: e.message });
       next(e);
     });
 };
@@ -110,13 +110,12 @@ const deletePet = async (req, res, next) => {
 const patchPet = async (req, res, next) => {
   log.debug("Calling patchPets...Verifying user inputs...");
   const { petID } = req.params;
-  const { petToUpdate } = req.body;
 
   try {
     // check content type
     if(!inputValidation.checkContentType(req, res)) throw new ContentTypeError();
     // check null values
-    const errList = inputValidation.getNullorEmpty(res, petToUpdate, optionalFields);
+    const errList = inputValidation.getNullorEmpty(res, req.body, optionalFields);
     if (errList.length != 0) throw new PropNullorEmptyError(errList);
   } catch (err) {
     return res.status(err.statusCode).json({ error: err.message });
@@ -126,21 +125,21 @@ const patchPet = async (req, res, next) => {
   await getPetById(req.app.get('db'), petID)
     .then((dbResponse) => {
       if (dbResponse.length == 0) {
-        return res.sendStatus(404);
+        return res.status(404).json({ error: "Pet not found." });
       }
-      updatePetById(req.app.get('db'), petID, petToUpdate, dbResponse[0])
+      updatePetById(req.app.get('db'), petID, req.body, dbResponse[0])
         .then(() => {
           res.sendStatus(200);
         })
         .catch((e) => {
           log.error(e);
-          res.sendStatus(500);
+          res.status(500).json({ error: e.message });
           next(e);
         });
     })
     .catch((e) => {
       log.error(e);
-      res.sendStatus(500);
+      res.status(500).json({ error: e.message });
       next(e);
     });
 };
