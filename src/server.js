@@ -43,8 +43,8 @@ router.post('/pets/imgupload', imageController.upload.single('petimage'), functi
   // req.body will hold the text fields, if there were any 
   if (!req.file) return res.json({ error: "something went wrong" })
   next()
-  console.log(req.file, req.body)
-  res.status(201).send({"fileName": req.file.filename, "path": req.file.path})
+  const fullUrl = req.protocol + '://' + req.get('host') + '/' + (req.file.path).replace('\\', '/').replace('public', 'images');
+  res.status(201).send({"fileName": req.file.filename, "path": fullUrl})
 });
 
 // Shelters
