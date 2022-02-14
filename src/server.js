@@ -39,8 +39,6 @@ router.delete('/pets/:petID', requireAuth, petsController.deletePet); //temp mid
 router.patch('/pets/:petID', requireAuth, petsController.patchPet); //temp middleware
 
 router.post('/pets/imgupload', imageController.upload.single('petimage'), function (req, res, next) {
-  // req.file is the name of your file in the form above, here 'uploaded_file'
-  // req.body will hold the text fields, if there were any 
   if (!req.file) return res.json({ error: "something went wrong" })
   next()
   const fullUrl = req.protocol + '://' + req.get('host') + '/' + (req.file.path).replace('\\', '/').replace('public', 'images');
