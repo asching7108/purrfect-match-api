@@ -5,7 +5,7 @@ const cors = require('cors');
 const petsController = require('./controllers/petsController');
 const sheltersController = require('./controllers/sheltersController');
 const usersController = require('./controllers/usersController');
-const imageController = require('./controllers/multer');
+const imageController = require('./controllers/imageController');
 const { db } = require("./models/db.js");
 const { requireAuth } = require('./utils/auth');
 
@@ -37,13 +37,8 @@ router.post('/pets', requireAuth, petsController.postPet);  //temp middleware
 router.get('/pets/:petID', petsController.getPet);
 router.delete('/pets/:petID', requireAuth, petsController.deletePet); //temp middleware
 router.patch('/pets/:petID', requireAuth, petsController.patchPet); //temp middleware
-
-router.post('/pets/imgupload', imageController.upload.single('petimage'), function (req, res, next) {
-  if (!req.file) return res.json({ error: "something went wrong" })
-  next()
-  const fullUrl = req.protocol + '://' + req.get('host') + '/' + (req.file.path).replace('\\', '/').replace('public', 'images');
-  res.status(201).send({"fileName": req.file.filename, "path": fullUrl})
-});
+// Pet Images
+router.post('/pets/imgupload', imageController.send);
 
 // Shelters
 router.post('/shelters', sheltersController.postShelters);
