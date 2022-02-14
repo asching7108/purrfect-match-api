@@ -5,11 +5,12 @@ const { Logger } = require("../utils/log4js.js");
 const log = Logger();
 
 const {
-  getAllPets,
+  retrievePets,
   createNewPet,
   getPetById,
   deletePetById,
-  updatePetById
+  updatePetById,
+  getAllBreeds
 } = petsModel;
 
 const requiredFields = [
@@ -36,7 +37,7 @@ const optionalFields = [
 
 const getPets = async (req, res, next) => {
   log.debug("Calling getPets...");
-  await getAllPets(req.app.get('db'))
+  await retrievePets(req.app.get('db'), req.query)
     .then((dbResponse) => {
       res.send(dbResponse);
     })
@@ -144,10 +145,24 @@ const patchPet = async (req, res, next) => {
     });
 };
 
+const getBreeds = async (req, res, next) => {
+  log.debug("Calling getBreeds...");
+  await getAllBreeds(req.app.get('db'))
+    .then((dbResponse) => {
+      res.send(dbResponse);
+    })
+    .catch((e) => {
+      log.error(e);
+      res.status(500).json({ error: e.message });
+      next(e);
+    });
+};
+
 module.exports = {
   getPets,
   postPet,
   getPet,
   deletePet,
-  patchPet
+  patchPet,
+  getBreeds
 };

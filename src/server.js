@@ -32,6 +32,8 @@ router.get('/pets/:petID', petsController.getPet);
 router.delete('/pets/:petID', requireAuth, petsController.deletePet); //temp middleware
 router.patch('/pets/:petID', requireAuth, petsController.patchPet); //temp middleware
 
+router.get('/breeds', petsController.getBreeds);
+
 // Shelters
 router.post('/shelters', sheltersController.postShelters);
 router.get('/shelters/:shelterID', sheltersController.getShelter);
