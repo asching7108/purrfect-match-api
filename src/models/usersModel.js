@@ -1,6 +1,7 @@
 const mysql = require('mysql');
 const { Logger } = require("../utils/log4js.js");
 const log = Logger();
+const { hashPassword, isCorrectPassword } = require('../utils/auth');
 
 const createUser = async (db, params) => {
 
@@ -11,7 +12,7 @@ const createUser = async (db, params) => {
     params.firstName,
     params.lastName,
     params.email,
-    params.password,
+    hashPassword(params.password),
     params.address,
     params.zipCode,
     params.distancePreference
@@ -94,9 +95,23 @@ const deleteUserByID = async (db, userID) => {
   });
 }
 
-const verifyLoginCredentials = async (db, email, password) => {
-  const sql = `SELECT UserID FROM User WHERE EmailAddress = ? AND Password = ?`;
-  const values = [email, password];
+const verifyLoginCredentials = async (db, email) => {
+  const sql = `SELECT UserID FROM User WHERE EmailAddress = ?`;
+  const values = [email];
+  return new Promise((resolve, reject) => {
+    db.query(sql, values, (err, res, fields) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(res);
+      }
+    });
+  });
+}
+
+const getHashedPasswordFromEmail = async (db, email) => {
+  const sql = `SELECT Password FROM User WHERE EmailAddress = ?`;
+  const values = [email];
   return new Promise((resolve, reject) => {
     db.query(sql, values, (err, res, fields) => {
       if (err) {
@@ -113,5 +128,6 @@ module.exports = {
   getUserByID,
   updateUserByID,
   deleteUserByID,
-  verifyLoginCredentials
+  verifyLoginCredentials,
+  getHashedPasswordFromEmail
 }

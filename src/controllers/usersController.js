@@ -3,7 +3,8 @@ const {
   getUserByID,
   updateUserByID,
   deleteUserByID,
-  verifyLoginCredentials
+  verifyLoginCredentials,
+  getHashedPasswordFromEmail
 } = require('../models/usersModel');
 
 const { inputValidation } = require('../utils/tools');
@@ -12,6 +13,7 @@ const { Logger } = require("../utils/log4js.js");
 const log = Logger();
 const jwt = require('jsonwebtoken');
 const { SECRET } = require('../config');
+const { isCorrectPassword } = require('../utils/auth');
 
 
 const postUsers = async (req, res, next) => {
@@ -133,25 +135,37 @@ const loginUser = async (req, res, next) => {
   if (success) {
     const { email, password } = req.body;
 
-    await verifyLoginCredentials(req.app.get('db'), email, password)
+    await getHashedPasswordFromEmail(req.app.get('db'), email)
       .then((dbResponse) => {
+        if (isCorrectPassword(dbResponse[0].Password, password)) {
+          verifyLoginCredentials(req.app.get('db'), email)
+            .then((dbResponse) => {
 
-        // Verify email and password
-        if (dbResponse.length !== 1) {
-          // There should only ever be one user with the same email and pw
-          res.status(401).send('Unauthorized');
+              // Verify email and password
+              if (dbResponse.length !== 1) {
+                // There should only ever be one user with the same email and pw
+                res.status(401).send('Unauthorized');
+              } else {
+                // Create JWT
+                const token = jwt.sign(
+                  {
+                    userID: dbResponse[0].UserID
+                  },
+                  SECRET,
+                  { expiresIn: '1h' }
+                );
+
+                // Return token
+                res.send({ token: token });
+              }
+            })
+            .catch((e) => {
+              console.log(e.message);
+              res.status(500).send('Server error');
+              next(e);
+            });
         } else {
-          // Create JWT
-          const token = jwt.sign(
-            {
-              userID: dbResponse[0].UserID
-            },
-            SECRET,
-            { expiresIn: '1h' }
-          );
-
-          // Return token
-          res.send({ token: token });
+          res.status(401).send('Unauthorized');
         }
       })
       .catch((e) => {
