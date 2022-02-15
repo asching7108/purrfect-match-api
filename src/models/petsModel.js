@@ -29,7 +29,7 @@ const retrievePets = async (db, query) => {
   if (query.minAge) values.push(query.minAge);
   if (query.maxAge) values.push(query.maxAge);
 
-  log.debug("Running getAllPets sql = " + mysql.format(sql, values));
+  log.debug("Running retrievePets sql = " + mysql.format(sql, values));
   return new Promise((resolve, reject) => {
     db.query(sql, values, (err, res, fields) => {
       if (err) {
@@ -151,6 +151,69 @@ const updatePetById = async (db, petID, petToUpdate, original) => {
   });
 };
 
+const getAllNews = async (db, query) => {
+  const sql = `SELECT i.*, p.*, s.ShelterName FROM PetNewsItem i
+              INNER JOIN Pet p ON i.PetID = p.PetID
+              INNER JOIN Shelter s ON p.ShelterID = s.ShelterID
+              ORDER BY i.DatePosted DESC`;
+  log.debug("Running getAllNews sql = " + mysql.format(sql));
+  return new Promise((resolve, reject) => {
+    db.query(sql, (err, res, fields) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(res);
+      }
+    });
+  });
+};
+
+const createPetNews = async (db, petID, newsItem) => {
+  const sql = 'INSERT INTO PetNewsItem (PetID, NewsItem, DatePosted) '
+            + 'VALUES (?, ?, NOW())';
+  const values = [petID, newsItem];
+  log.debug("Running createPetNews sql = " + mysql.format(sql, values));
+  return new Promise((resolve, reject) => {
+    db.query(sql, values, (err, res, fields) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(res);
+      }
+    });
+  });
+}
+
+const getPetNewsByPetId = async (db, petID) => {
+  const sql = 'SELECT * FROM PetNewsItem WHERE PetID = ? ORDER BY DatePosted DESC';
+  const values = [petID];
+  log.debug("Running getPetNewsByPetId sql = " + mysql.format(sql, values));
+  return new Promise((resolve, reject) => {
+    db.query(sql, values, (err, res, fields) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(res);
+      }
+    });
+  });
+};
+
+const deletePetNewsById = async (db, newsItemID) => {
+  const sql = 'DELETE FROM PetNewsItem WHERE NewsItemID = ?';
+  const values = [newsItemID];
+  log.debug("Running deletePetNewsById sql = " + mysql.format(sql, values));
+  return new Promise((resolve, reject) => {
+    db.query(sql, values, (err, res, fields) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(res);
+      }
+    });
+  });
+};
+
 const getAllBreeds = async (db) => {
   const sql = 'SELECT * FROM PetBreed';
   log.debug("Running getAllBreeds sql = " + mysql.format(sql));
@@ -171,5 +234,9 @@ module.exports = {
   getPetById,
   deletePetById,
   updatePetById,
+  getAllNews,
+  createPetNews,
+  getPetNewsByPetId,
+  deletePetNewsById,
   getAllBreeds
 };

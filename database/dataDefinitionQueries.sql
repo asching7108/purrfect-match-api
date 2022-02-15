@@ -67,7 +67,7 @@ CREATE TABLE `User` (
 CREATE TABLE `PetNewsItem` (
  `NewsItemID` int not null AUTO_INCREMENT,
  `PetID` int not null,
- `NewsItem` varchar(255) not null,
+ `NewsItem` text not null,
  `DatePosted` datetime not null,
   PRIMARY KEY (`NewsItemID`),
   CONSTRAINT `PetID_fk` FOREIGN KEY (`PetID`) REFERENCES `Pet` (`PetID`) ON DELETE CASCADE
