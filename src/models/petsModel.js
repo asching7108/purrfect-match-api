@@ -5,9 +5,11 @@ const log = Logger();
 const retrievePets = async (db, query) => {
   const sql = `SELECT p.*, s.ShelterName, s.Address, s.EmailAddress, s.PhoneNumber, s.Website
               FROM Pet p INNER JOIN Shelter s ON p.ShelterID = s.ShelterID
-              WHERE p.Availability = 'Available'
-              ${query.typeOfAnimal ? `AND p.TypeOfAnimal in (?)`: ''}
-              ${query.breed ? `AND p.Breed in (?)`: ''}
+              WHERE 1
+              ${query.availability ? 'AND p.Availability = ?' : ''}
+              ${query.shelterID ? 'AND p.ShelterID = ?' : ''}
+              ${query.typeOfAnimal ? 'AND p.TypeOfAnimal in (?)' : ''}
+              ${query.breed ? 'AND p.Breed in (?)' : ''}
               ${query.sex ? 'AND p.Sex = ?' : ''}
               ${query.minAge ? 'AND p.Age >= ?' : ''}
               ${query.maxAge ? 'AND p.Age <= ?' : ''}
@@ -19,6 +21,8 @@ const retrievePets = async (db, query) => {
               ${query.houseTrained ? 'AND p.HouseTrained' : ''}
               ORDER BY p.PetID`;
   const values = [];
+  if (query.availability) values.push(query.availability);
+  if (query.shelterID) values.push(query.shelterID);
   if (query.typeOfAnimal) values.push(query.typeOfAnimal.split(','));
   if (query.breed) values.push(query.breed.split(','));
   if (query.sex) values.push(query.sex);
