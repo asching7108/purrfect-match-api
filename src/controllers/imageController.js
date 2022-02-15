@@ -34,9 +34,8 @@ module.exports.send = (req, res, next) => {
   log.debug("Saving image to public folder...")
   let controller = () => {
       if (!req.file) return res.json({ error: "something went wrong" })
-    next()
-    const fullUrl = req.protocol + '://' + req.get('host') + '/' + (req.file.path).replace('\\', '/').replace('public', 'images');
-    res.status(201).send({ "fileName": req.file.filename, "path": fullUrl })
+
+    res.status(201).send({ "fileName": req.file.filename, "path": "/" + (req.file.path).replace('\\', '/').replace('public', 'images') })
   };
 
   middleware(req, res, controller); //callback
