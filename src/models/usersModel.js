@@ -1,7 +1,7 @@
 const mysql = require('mysql');
 const { Logger } = require("../utils/log4js.js");
 const log = Logger();
-const { hashPassword, isCorrectPassword } = require('../utils/auth');
+const { hashPassword } = require('../utils/auth');
 
 const createUser = async (db, params) => {
 

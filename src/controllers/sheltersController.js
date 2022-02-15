@@ -1,11 +1,12 @@
 const sheltersModel = require('../models/sheltersModel.js');
 const { inputValidation } = require("../utils/tools.js");
 const { ContentTypeError, PropNullorEmptyError, PropRequiredError } = require("../utils/errors.js");
-const { createShelters, getShelterByID, deleteShelterByID, updateShelterByID, getAllPets, verifyShelterLoginCredentials } = sheltersModel;
+const { createShelters, getShelterByID, deleteShelterByID, updateShelterByID, getAllPets, verifyShelterLoginCredentials, getHashedPasswordFromEmail } = sheltersModel;
 const { Logger } = require("../utils/log4js.js");
 const log = Logger();
 const jwt = require('jsonwebtoken');
 const { SECRET } = require('../config');
+const { isCorrectPassword } = require('../utils/auth');
 
 const postShelters = async (req, res, next) => {
   log.debug("Calling postShelters...Verifying user inputs...");
@@ -150,25 +151,37 @@ const loginShelter = async (req, res, next) => {
   if (success) {
     const { email, password } = req.body;
 
-    await verifyShelterLoginCredentials(req.app.get('db'), email, password)
+    await getHashedPasswordFromEmail(req.app.get('db'), email)
       .then((dbResponse) => {
+        if (isCorrectPassword(dbResponse[0].Password, password)) {
+          verifyShelterLoginCredentials(req.app.get('db'), email)
+            .then((dbResponse) => {
 
-        // Verify email and password
-        if (dbResponse.length !== 1) {
-          // There should only ever be one shelter with the same email and pw
-          res.status(401).send('Unauthorized');
+              // Verify email and password
+              if (dbResponse.length !== 1) {
+                // There should only ever be one shelter with the same email and pw
+                res.status(401).send('Unauthorized');
+              } else {
+                // Create JWT
+                const token = jwt.sign(
+                  {
+                    shelterID: dbResponse[0].ShelterID
+                  },
+                  SECRET,
+                  { expiresIn: '1h' }
+                );
+
+                // Return token
+                res.send({ token: token });
+              }
+            })
+            .catch((e) => {
+              console.log(e.message);
+              res.status(500).send('Server error');
+              next(e);
+            });
         } else {
-          // Create JWT
-          const token = jwt.sign(
-            {
-              shelterID: dbResponse[0].ShelterID
-            },
-            SECRET,
-            { expiresIn: '1h' }
-          );
-
-          // Return token
-          res.send({ token: token });
+          res.status(401).send('Unauthorized');
         }
       })
       .catch((e) => {
