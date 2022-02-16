@@ -40,6 +40,8 @@ router.patch('/pets/:petID', requireAuth, petsController.patchPet); //temp middl
 // Pet Images
 router.post('/pets/imgupload', imageController.send);
 
+router.get('/breeds', petsController.getBreeds);
+
 // Shelters
 router.post('/shelters', sheltersController.postShelters);
 router.get('/shelters/:shelterID', sheltersController.getShelter);

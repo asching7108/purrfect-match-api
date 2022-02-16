@@ -2,6 +2,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 TRUNCATE Shelter;
 TRUNCATE Pet;
 TRUNCATE User;
+TRUNCATE PetBreed;
 SET FOREIGN_KEY_CHECKS = 1;
 
 INSERT INTO Shelter (ShelterName, Address, EmailAddress, Password, PhoneNumber, Website, LastUpdated)
@@ -32,3 +33,13 @@ VALUES
 INSERT INTO User (FirstName, LastName, EmailAddress, Password, Address, ZipCode, DistancePreference, LastUpdated)
 VALUES
   ('Esther', 'Lin', 'linhsin@oregonstate.edu', 'password', NULL, 10001, NULL, '2022-01-27 12:32:05');
+
+INSERT INTO PetBreed (TypeOfAnimal, Breed)
+VALUES
+  ('Cat', 'American ShortHair'),
+  ('Cat', 'Domestic ShortHair'),
+  ('Cat', 'Other'),
+  ('Dog', 'Golden Retriever'),
+  ('Dog', 'Mixed'),
+  ('Dog', 'Other'),
+  ('Other', 'Other');

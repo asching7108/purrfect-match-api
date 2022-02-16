@@ -2,13 +2,36 @@ const mysql = require("mysql");
 const { Logger } = require("../utils/log4js.js");
 const log = Logger();
 
-const getAllPets = async (db) => {
-  const sql = 'SELECT p.*, s.ShelterName, s.Address, s.EmailAddress, s.PhoneNumber, s.Website '
-            + 'FROM Pet p INNER JOIN Shelter s ON p.ShelterID = s.ShelterID '
-            + 'ORDER BY p.PetID';
-  log.debug("Running getAllPets sql = " + mysql.format(sql));
+const retrievePets = async (db, query) => {
+  const sql = `SELECT p.*, s.ShelterName, s.Address, s.EmailAddress, s.PhoneNumber, s.Website
+              FROM Pet p INNER JOIN Shelter s ON p.ShelterID = s.ShelterID
+              WHERE 1
+              ${query.availability ? 'AND p.Availability = ?' : ''}
+              ${query.shelterID ? 'AND p.ShelterID = ?' : ''}
+              ${query.typeOfAnimal ? 'AND p.TypeOfAnimal in (?)' : ''}
+              ${query.breed ? 'AND p.Breed in (?)' : ''}
+              ${query.sex ? 'AND p.Sex = ?' : ''}
+              ${query.minAge ? 'AND p.Age >= ?' : ''}
+              ${query.maxAge ? 'AND p.Age <= ?' : ''}
+              ${query.goodWithOtherAnimals ? 'AND p.GoodWithOtherAnimals' : ''}
+              ${query.goodWithChildren ? 'AND p.GoodWithChildren' : ''}
+              ${query.leashNotRequired ? 'AND p.MustBeLeashed = 0' : ''}
+              ${query.neutered ? 'AND p.Neutered' : ''}
+              ${query.vaccinated ? 'AND p.Vaccinated' : ''}
+              ${query.houseTrained ? 'AND p.HouseTrained' : ''}
+              ORDER BY p.PetID`;
+  const values = [];
+  if (query.availability) values.push(query.availability);
+  if (query.shelterID) values.push(query.shelterID);
+  if (query.typeOfAnimal) values.push(query.typeOfAnimal.split(','));
+  if (query.breed) values.push(query.breed.split(','));
+  if (query.sex) values.push(query.sex);
+  if (query.minAge) values.push(query.minAge);
+  if (query.maxAge) values.push(query.maxAge);
+
+  log.debug("Running getAllPets sql = " + mysql.format(sql, values));
   return new Promise((resolve, reject) => {
-    db.query(sql, (err, res, fields) => {
+    db.query(sql, values, (err, res, fields) => {
       if (err) {
         reject(err);
       } else {
@@ -128,10 +151,25 @@ const updatePetById = async (db, petID, petToUpdate, original) => {
   });
 };
 
+const getAllBreeds = async (db) => {
+  const sql = 'SELECT * FROM PetBreed';
+  log.debug("Running getAllBreeds sql = " + mysql.format(sql));
+  return new Promise((resolve, reject) => {
+    db.query(sql, (err, res, fields) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(res);
+      }
+    });
+  });
+};
+
 module.exports = {
-  getAllPets,
+  retrievePets,
   createNewPet,
   getPetById,
   deletePetById,
-  updatePetById
+  updatePetById,
+  getAllBreeds
 };
