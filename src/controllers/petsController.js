@@ -1,8 +1,10 @@
 const petsModel = require('../models/petsModel.js');
 const { inputValidation } = require("../utils/tools.js");
-const { ContentTypeError, PropNullorEmptyError, PropRequiredError } = require("../utils/errors.js");
+const { ContentTypeError, PropNullorEmptyError, PropRequiredError, AuthorizationError } = require("../utils/errors.js");
 const { Logger } = require("../utils/log4js.js");
 const log = Logger();
+const jwt = require('jsonwebtoken');
+const { SECRET } = require('../config.js');
 
 const {
   retrievePets,
@@ -53,7 +55,7 @@ const postPet = async (req, res, next) => {
 
   try {
     // check content type
-    if(!inputValidation.checkContentType(req, res)) throw new ContentTypeError();
+    if (!inputValidation.checkContentType(req, res)) throw new ContentTypeError();
     // check all attrs are provided (input validation)
     let errList = inputValidation.getMissingAttrs(res, req.body, requiredFields)
     if (errList.length != 0) throw new PropRequiredError(errList);
@@ -114,7 +116,7 @@ const patchPet = async (req, res, next) => {
 
   try {
     // check content type
-    if(!inputValidation.checkContentType(req, res)) throw new ContentTypeError();
+    if (!inputValidation.checkContentType(req, res)) throw new ContentTypeError();
     // check null values
     const errList = inputValidation.getNullorEmpty(res, req.body, optionalFields);
     if (errList.length != 0) throw new PropNullorEmptyError(errList);
@@ -128,6 +130,31 @@ const patchPet = async (req, res, next) => {
       if (dbResponse.length == 0) {
         return res.status(404).json({ error: "Pet not found." });
       }
+
+      // check the jwt in request header to see if same as pet's shelter
+      // This is done here because a pet can be updated without sending a
+      // shelter ID, which is what is used to authorize shelter
+      try {
+        const token = req.headers['authorization']?.replace('Bearer ', '')
+        if (token === undefined) {
+          log.debug('JWT not provided');
+          throw new AuthorizationError;
+        }
+        jwt.verify(token, SECRET, function(err, decoded) {
+          if (err) {
+            log.debug('JWT verification error');
+            throw new AuthorizationError;
+          }
+          if (dbResponse[0].ShelterID != decoded.shelterID) {
+            log.debug("Token's shelter does not match pet's shelter")
+            throw new AuthorizationError;
+          }
+        })
+      } catch(err) {
+        return res.status(err.statusCode).json({ error: err.message });
+      }
+      
+
       updatePetById(req.app.get('db'), petID, req.body, dbResponse[0])
         .then(() => {
           res.sendStatus(200);
