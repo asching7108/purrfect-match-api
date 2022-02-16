@@ -23,7 +23,7 @@ const upload = multer({
       cb(null, true)
     } else {
       cb(null, false)
-      return cb('Only .png, .jpg and .jpeg format allowed!')
+      return cb(new Error('Only .png, .jpg and .jpeg format allowed!'))
     }
   }
 })
@@ -32,9 +32,10 @@ let middleware = upload.single('petimage');
 
 module.exports.send = (req, res, next) => {
   log.debug("Saving image to public folder...")
-  let controller = () => {
-      if (!req.file) return res.json({ error: "something went wrong" })
-
+  let controller = (err) => {
+    if (err) {
+      return res.status(400).json({ error: err.message });
+    }
     res.status(201).send({ "fileName": req.file.filename, "path": "/" + (req.file.path).replace('\\', '/').replace('public', 'images') })
   };
 
