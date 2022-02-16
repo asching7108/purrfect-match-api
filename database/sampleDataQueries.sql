@@ -34,6 +34,12 @@ INSERT INTO User (FirstName, LastName, EmailAddress, Password, Address, ZipCode,
 VALUES
   ('Esther', 'Lin', 'linhsin@oregonstate.edu', 'password', NULL, 10001, NULL, '2022-01-27 12:32:05');
 
+INSERT INTO PetNewsItem (PetID, DatePosted, NewsItem)
+VALUES
+  (1, '2022-02-16 13:26:04', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean rutrum iaculis est, eu cursus quam fringilla at. Nulla eget aliquam nunc. Suspendisse porttitor dignissim dui a elementum. Praesent non nibh sed urna malesuada ornare. Duis in lectus nunc. Suspendisse rutrum feugiat metus, vel viverra massa placerat nec. Etiam et augue at mi sodales ullamcorper a vitae purus. Vestibulum vitae convallis neque, sed vulputate diam. Cras eu interdum sem, vel bibendum sapien.'),
+  (1, '2022-02-16 13:27:44', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean rutrum iaculis est, eu cursus quam fringilla at. Nulla eget aliquam nunc. Suspendisse porttitor dignissim dui a elementum. Praesent non nibh sed urna malesuada ornare. Duis in lectus nunc. Suspendisse rutrum feugiat metus, vel viverra massa placerat nec. Etiam et augue at mi sodales ullamcorper a vitae purus. Vestibulum vitae convallis neque, sed vulputate diam. Cras eu interdum sem, vel bibendum sapien.'),
+  (1, '2022-02-16 13:34:00', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean rutrum iaculis est, eu cursus quam fringilla at. Nulla eget aliquam nunc. Suspendisse porttitor dignissim dui a elementum. Praesent non nibh sed urna malesuada ornare. Duis in lectus nunc. Suspendisse rutrum feugiat metus, vel viverra massa placerat nec. Etiam et augue at mi sodales ullamcorper a vitae purus. Vestibulum vitae convallis neque, sed vulputate diam. Cras eu interdum sem, vel bibendum sapien.');
+
 INSERT INTO PetBreed (TypeOfAnimal, Breed)
 VALUES
   ('Cat', 'American ShortHair'),
