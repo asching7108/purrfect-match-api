@@ -134,7 +134,10 @@ const patchPet = async (req, res, next) => {
         return res.status(404).json({ error: "Pet not found." });
       }
       updatePetById(req.app.get('db'), petID, req.body, dbResponse[0])
-        .then(() => {
+        .then((dbResponse) => {
+          if (dbResponse.affectedRows == 0) {
+            return res.status(400).json({ error: "Bad request." });
+          }
           res.sendStatus(200);
         })
         .catch((e) => {
