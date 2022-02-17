@@ -10,14 +10,14 @@ function requireAuth(req, res, next) {
     // verify token exists
     const token = req.headers['authorization']?.replace('Bearer ', '')
     if (token === undefined) {
-      log.debug('JWT not provided');
+      log.error('JWT not provided');
       throw new AuthorizationError;
     }
 
     // verify token is valid
     jwt.verify(token, SECRET, function (err, decoded) {
       if (err) {
-        log.debug('JWT verification error');
+        log.error('JWT verification error');
         throw new AuthorizationError;
       }
 
@@ -27,11 +27,11 @@ function requireAuth(req, res, next) {
 
       // verify user/shelter has access
       if (userID && userID != decoded.userID) {
-        log.debug('user does not have access');
+        log.error('user does not have access');
         throw new AuthorizationError;
       }
       if (shelterID && shelterID != decoded.shelterID) {
-        log.debug('shelter does not have access');
+        log.error('shelter does not have access');
         throw new AuthorizationError;
       };
 

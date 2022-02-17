@@ -1,10 +1,8 @@
 const petsModel = require('../models/petsModel.js');
 const { inputValidation } = require("../utils/tools.js");
-const { ContentTypeError, PropNullorEmptyError, PropRequiredError, AuthorizationError } = require("../utils/errors.js");
+const { ContentTypeError, PropNullorEmptyError, PropRequiredError } = require("../utils/errors.js");
 const { Logger } = require("../utils/log4js.js");
 const log = Logger();
-const jwt = require('jsonwebtoken');
-const { SECRET } = require('../config.js');
 
 const {
   retrievePets,
