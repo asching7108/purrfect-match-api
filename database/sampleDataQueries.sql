@@ -40,6 +40,6 @@ VALUES
   ('Cat', 'Domestic ShortHair'),
   ('Cat', 'Other'),
   ('Dog', 'Golden Retriever'),
-  ('Dog', 'German Shepherd'),
-  ('Dog', 'Mix / Other'),
+  ('Dog', 'Mixed'),
+  ('Dog', ' Other'),
   ('Other', 'Other');
