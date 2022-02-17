@@ -105,22 +105,8 @@ const getAllPets = async (db, shelterID) => {
   });
 }
 
-const verifyShelterLoginCredentials = async (db, email) => {
-  const sql = `SELECT ShelterID FROM Shelter WHERE EmailAddress = ?`;
-  const values = [email];
-  return new Promise((resolve, reject) => {
-    db.query(sql, values, (err, res, fields) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(res);
-      }
-    });
-  });
-}
-
-const getHashedPasswordFromEmail = async (db, email) => {
-  const sql = `SELECT Password FROM Shelter WHERE EmailAddress = ?`;
+const getShelterLoginCredentials = async (db, email) => {
+  const sql = `SELECT ShelterID, Password FROM Shelter WHERE EmailAddress = ?`;
   const values = [email];
   return new Promise((resolve, reject) => {
     db.query(sql, values, (err, res, fields) => {
@@ -139,6 +125,5 @@ module.exports = {
   deleteShelterByID,
   updateShelterByID,
   getAllPets,
-  verifyShelterLoginCredentials,
-  getHashedPasswordFromEmail
+  getShelterLoginCredentials
 };

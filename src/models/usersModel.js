@@ -95,8 +95,8 @@ const deleteUserByID = async (db, userID) => {
   });
 }
 
-const verifyLoginCredentials = async (db, email) => {
-  const sql = `SELECT UserID FROM User WHERE EmailAddress = ?`;
+const getLoginCredentials = async (db, email) => {
+  const sql = `SELECT UserID, Password FROM User WHERE EmailAddress = ?`;
   const values = [email];
   return new Promise((resolve, reject) => {
     db.query(sql, values, (err, res, fields) => {
@@ -109,25 +109,11 @@ const verifyLoginCredentials = async (db, email) => {
   });
 }
 
-const getHashedPasswordFromEmail = async (db, email) => {
-  const sql = `SELECT Password FROM User WHERE EmailAddress = ?`;
-  const values = [email];
-  return new Promise((resolve, reject) => {
-    db.query(sql, values, (err, res, fields) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(res);
-      }
-    });
-  });
-}
 
 module.exports = {
   createUser,
   getUserByID,
   updateUserByID,
   deleteUserByID,
-  verifyLoginCredentials,
-  getHashedPasswordFromEmail
+  getLoginCredentials
 }

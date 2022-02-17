@@ -3,8 +3,7 @@ const {
   getUserByID,
   updateUserByID,
   deleteUserByID,
-  verifyLoginCredentials,
-  getHashedPasswordFromEmail
+  getLoginCredentials
 } = require('../models/usersModel');
 
 const { inputValidation } = require('../utils/tools');
@@ -65,8 +64,6 @@ const getUser = async (req, res, next) => {
 const patchUser = async (req, res, next) => {
   log.debug("Calling patchUser...Verifying user inputs...");
 
-  // TODO: add auth
-
   let success = true;
   try {
     //check content type
@@ -94,8 +91,6 @@ const patchUser = async (req, res, next) => {
 
 const deleteUser = async (req, res, next) => {
   log.debug("Calling deleteUser...");
-
-  // TODO: add auth
 
   // UserPet and UserPreference rows are deleted when user is deleted
   await deleteUserByID(req.app.get('db'), req.params.userID)
@@ -135,35 +130,24 @@ const loginUser = async (req, res, next) => {
   if (success) {
     const { email, password } = req.body;
 
-    await getHashedPasswordFromEmail(req.app.get('db'), email)
+    await getLoginCredentials(req.app.get('db'), email)
       .then((dbResponse) => {
-        if (isCorrectPassword(dbResponse[0].Password, password)) {
-          verifyLoginCredentials(req.app.get('db'), email)
-            .then((dbResponse) => {
+        if (dbResponse.length !== 1) {
+          // There should only ever be one user with the same email and pw
+          res.status(401).send('Unauthorized');
+        } else if (isCorrectPassword(dbResponse[0].Password, password)) {
+          // Create JWT
+          const token = jwt.sign(
+            {
+              userID: dbResponse[0].UserID
+            },
+            SECRET,
+            { expiresIn: '1h' }
+          );
 
-              // Verify email and password
-              if (dbResponse.length !== 1) {
-                // There should only ever be one user with the same email and pw
-                res.status(401).send('Unauthorized');
-              } else {
-                // Create JWT
-                const token = jwt.sign(
-                  {
-                    userID: dbResponse[0].UserID
-                  },
-                  SECRET,
-                  { expiresIn: '1h' }
-                );
+          // Return token
+          res.send({ token: token });
 
-                // Return token
-                res.send({ token: token });
-              }
-            })
-            .catch((e) => {
-              console.log(e.message);
-              res.status(500).send('Server error');
-              next(e);
-            });
         } else {
           res.status(401).send('Unauthorized');
         }
