@@ -113,13 +113,13 @@ const updatePetById = async (db, petID, petToUpdate, original) => {
   const age = petToUpdate.hasOwnProperty('age') ? petToUpdate.age : original.Age;
   // use coalesce() to avoid 'Column ... cannot be null' error
   const sql = 'UPDATE Pet SET Name = ?, TypeOfAnimal = coalesce(?, ?), Breed = coalesce(?, ?), '
-            + 'Sex = coalesce(?, ?), Age = ?, Size = coalesce(?, ?), ShelterID = coalesce(?, ?), '
+            + 'Sex = coalesce(?, ?), Age = ?, Size = coalesce(?, ?), '
             + 'Picture = coalesce(?, ?), Availability = coalesce(?, ?), '
             + 'GoodWithOtherAnimals = coalesce(?, ?), GoodWithChildren = coalesce(?, ?), '
             + 'MustBeLeashed = coalesce(?, ?), Neutered = coalesce(?, ?), '
             + 'Vaccinated = coalesce(?, ?), HouseTrained = coalesce(?, ?), '
             + 'Description = coalesce(?, ?), LastUpdated = NOW() '
-            + 'WHERE PetID = ?';
+            + 'WHERE PetID = ? AND ShelterID = ?';
   const values = [
     name,
     petToUpdate.typeOfAnimal, original.TypeOfAnimal,
@@ -127,7 +127,6 @@ const updatePetById = async (db, petID, petToUpdate, original) => {
     petToUpdate.sex, original.Sex,
     age,
     petToUpdate.size, original.Size,
-    petToUpdate.shelterID, original.ShelterID,
     petToUpdate.picture, original.Picture,
     petToUpdate.availability, original.Availability,
     petToUpdate.goodWithOtherAnimals, original.GoodWithOtherAnimals,
@@ -137,7 +136,8 @@ const updatePetById = async (db, petID, petToUpdate, original) => {
     petToUpdate.vaccinated, original.Vaccinated,
     petToUpdate.houseTrained, original.HouseTrained,
     petToUpdate.description, original.Description,
-    petID
+    petID,
+    petToUpdate.ShelterID
   ];
   log.debug("Running updatePetById sql = " + mysql.format(sql, values));
   return new Promise((resolve, reject) => {

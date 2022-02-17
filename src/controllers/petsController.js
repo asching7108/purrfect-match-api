@@ -117,8 +117,11 @@ const patchPet = async (req, res, next) => {
   try {
     // check content type
     if (!inputValidation.checkContentType(req, res)) throw new ContentTypeError();
+    // check shelterID is provided (only required attribute for PATCH)
+    let errList = inputValidation.getMissingAttrs(res, req.body, ['shelterID']);
+    if (errList.length != 0) throw new PropRequiredError(errList);
     // check null values
-    const errList = inputValidation.getNullorEmpty(res, req.body, optionalFields);
+    errList = inputValidation.getNullorEmpty(res, req.body, optionalFields);
     if (errList.length != 0) throw new PropNullorEmptyError(errList);
   } catch (err) {
     return res.status(err.statusCode).json({ error: err.message });
@@ -130,31 +133,6 @@ const patchPet = async (req, res, next) => {
       if (dbResponse.length == 0) {
         return res.status(404).json({ error: "Pet not found." });
       }
-
-      // check the jwt in request header to see if same as pet's shelter
-      // This is done here because a pet can be updated without sending a
-      // shelter ID, which is what is used to authorize shelter
-      try {
-        const token = req.headers['authorization']?.replace('Bearer ', '')
-        if (token === undefined) {
-          log.debug('JWT not provided');
-          throw new AuthorizationError;
-        }
-        jwt.verify(token, SECRET, function(err, decoded) {
-          if (err) {
-            log.debug('JWT verification error');
-            throw new AuthorizationError;
-          }
-          if (dbResponse[0].ShelterID != decoded.shelterID) {
-            log.debug("Token's shelter does not match pet's shelter")
-            throw new AuthorizationError;
-          }
-        })
-      } catch(err) {
-        return res.status(err.statusCode).json({ error: err.message });
-      }
-      
-
       updatePetById(req.app.get('db'), petID, req.body, dbResponse[0])
         .then(() => {
           res.sendStatus(200);
