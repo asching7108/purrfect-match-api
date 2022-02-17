@@ -25,6 +25,12 @@ class ValidationError extends Error {
       log.debug('Required attributes validation failed. Will return 400 Bad Request.');
       log.info('Error detail: ' + this.message);
     }
+    else if (this instanceof AuthorizationError){
+      this.message = 'Unauthorized request.'
+      this.statusCode = 401;
+      log.debug('Authorization failed. Will return 401 Unauthorized.');
+      log.info('Error detail: ' + this.message);
+    }
   }
 }
 
@@ -32,10 +38,12 @@ class ValidationError extends Error {
 class ContentTypeError extends ValidationError { }
 class PropNullorEmptyError extends ValidationError { }
 class PropRequiredError extends ValidationError { }
+class AuthorizationError extends ValidationError{ }
 
 module.exports = {
   ValidationError,
   ContentTypeError,
   PropNullorEmptyError,
-  PropRequiredError
+  PropRequiredError,
+  AuthorizationError
 }

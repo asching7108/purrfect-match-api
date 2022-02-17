@@ -53,7 +53,7 @@ const postPet = async (req, res, next) => {
 
   try {
     // check content type
-    if(!inputValidation.checkContentType(req, res)) throw new ContentTypeError();
+    if (!inputValidation.checkContentType(req, res)) throw new ContentTypeError();
     // check all attrs are provided (input validation)
     let errList = inputValidation.getMissingAttrs(res, req.body, requiredFields)
     if (errList.length != 0) throw new PropRequiredError(errList);
@@ -114,9 +114,12 @@ const patchPet = async (req, res, next) => {
 
   try {
     // check content type
-    if(!inputValidation.checkContentType(req, res)) throw new ContentTypeError();
+    if (!inputValidation.checkContentType(req, res)) throw new ContentTypeError();
+    // check shelterID is provided (only required attribute for PATCH)
+    let errList = inputValidation.getMissingAttrs(res, req.body, ['shelterID']);
+    if (errList.length != 0) throw new PropRequiredError(errList);
     // check null values
-    const errList = inputValidation.getNullorEmpty(res, req.body, optionalFields);
+    errList = inputValidation.getNullorEmpty(res, req.body, optionalFields);
     if (errList.length != 0) throw new PropNullorEmptyError(errList);
   } catch (err) {
     return res.status(err.statusCode).json({ error: err.message });
@@ -129,7 +132,10 @@ const patchPet = async (req, res, next) => {
         return res.status(404).json({ error: "Pet not found." });
       }
       updatePetById(req.app.get('db'), petID, req.body, dbResponse[0])
-        .then(() => {
+        .then((dbResponse) => {
+          if (dbResponse.affectedRows == 0) {
+            return res.status(400).json({ error: "Bad request." });
+          }
           res.sendStatus(200);
         })
         .catch((e) => {

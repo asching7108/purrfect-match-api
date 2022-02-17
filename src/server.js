@@ -33,10 +33,10 @@ app.get('/', (req, res) => {
 
 // Pets
 router.get('/pets', petsController.getPets);
-router.post('/pets', requireAuth, petsController.postPet);  //temp middleware
+router.post('/pets', requireAuth, petsController.postPet);
 router.get('/pets/:petID', petsController.getPet);
-router.delete('/pets/:petID', requireAuth, petsController.deletePet); //temp middleware
-router.patch('/pets/:petID', requireAuth, petsController.patchPet); //temp middleware
+router.delete('/pets/:petID', requireAuth, petsController.deletePet);
+router.patch('/pets/:petID', requireAuth, petsController.patchPet);
 // Pet Images
 router.post('/pets/imgupload', imageController.send);
 
@@ -45,8 +45,8 @@ router.get('/breeds', petsController.getBreeds);
 // Shelters
 router.post('/shelters', sheltersController.postShelters);
 router.get('/shelters/:shelterID', sheltersController.getShelter);
-router.delete('/shelters/:shelterID', sheltersController.deleteShelter);
-router.patch('/shelters/:shelterID', sheltersController.updateShelter);
+router.delete('/shelters/:shelterID', requireAuth, sheltersController.deleteShelter);
+router.patch('/shelters/:shelterID', requireAuth, sheltersController.updateShelter);
 router.get('/shelters/:shelterID/pets', sheltersController.getPets);
 router.post('/shelters/login', sheltersController.loginShelter);
 
@@ -54,8 +54,8 @@ router.post('/shelters/login', sheltersController.loginShelter);
 router.post('/users/login', usersController.loginUser);
 router.post('/users', usersController.postUsers);
 router.get('/users/:userID', usersController.getUser);
-router.patch('/users/:userID', usersController.patchUser);
-router.delete('/users/:userID', usersController.deleteUser);
+router.patch('/users/:userID', requireAuth, usersController.patchUser);
+router.delete('/users/:userID', requireAuth, usersController.deleteUser);
 
 /* Start server */
 app.use('/', router);
