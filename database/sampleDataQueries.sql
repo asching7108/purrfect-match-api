@@ -13,23 +13,14 @@ VALUES
 
 INSERT INTO Pet (Name, TypeOfAnimal, Breed, Sex, Age, Size, ShelterID, Picture, Availability, LastUpdated, GoodWithOtherAnimals, GoodWithChildren, MustBeLeashed, Neutered, Vaccinated, HouseTrained, Description)
 VALUES
-  ('Valley', 'Dog', 'Golden Retriever', 'Male', 1, 'Large, 45lbs', 1, '', 'Available', '2022-01-27 12:32:05', 1, 1, 0, 1, 1, 1,
+  ('Valley', 'Dog', 'Golden Retriever', 'Male', 1, 'Large, 45lbs', 1, '/images/petimage-testGolden.png', 'Available', '2022-01-27 12:32:05', 1, 1, 0, 1, 1, 1,
    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed blandit facilisis elit, id volutpat dolor porttitor sed. Proin erat diam, venenatis ac lacinia a, condimentum ac turpis. Fusce eu nisl tempor, feugiat neque vitae, tincidunt est.'),
-  ('River', 'Dog', 'Mixed', 'Male', 4, 'Medium, 25lbs', 1, '', 'Available', '2022-01-27 12:32:05', 0, 1, 0, 1, 1, 1,
+  ('River', 'Dog', 'Mixed', 'Male', 4, 'Medium, 25lbs', 1, '/images/petimage-testMix.png', 'Available', '2022-01-27 12:32:05', 0, 1, 0, 1, 1, 1,
    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed blandit facilisis elit, id volutpat dolor porttitor sed. Proin erat diam, venenatis ac lacinia a, condimentum ac turpis. Fusce eu nisl tempor, feugiat neque vitae, tincidunt est.'),
-  ('Adeline', 'Cat', 'Domestic Shorthair', 'Female', 2, 'Small, 8.8lbs', 2, '', 'Available', '2022-01-27 12:32:05', 0, 0, 0, 1, 1, 1,
+  ('Adeline', 'Cat', 'Domestic Shorthair', 'Female', 2, 'Small, 8.8lbs', 2, '/images/petimage-testCat.png', 'Available', '2022-01-27 12:32:05', 0, 0, 0, 1, 1, 1,
    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed blandit facilisis elit, id volutpat dolor porttitor sed. Proin erat diam, venenatis ac lacinia a, condimentum ac turpis. Fusce eu nisl tempor, feugiat neque vitae, tincidunt est.'),
-   ('CHIP', 'Dog', 'Chihuahua', 'Male', 1, 'Small, 5lbs', 1, '', 'Pending', '2022-01-27 12:32:05', 1, 1, 0, 1, 1, 1,
-   'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed blandit facilisis elit, id volutpat dolor porttitor sed. Proin erat diam, venenatis ac lacinia a, condimentum ac turpis. Fusce eu nisl tempor, feugiat neque vitae, tincidunt est.'),
-  ('COOPER', 'Dog', 'Mixed', 'Male', 4, 'Medium, 25lbs', 2, '', 'Available', '2022-01-27 12:32:05', 0, 1, 0, 1, 1, 1,
-   'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed blandit facilisis elit, id volutpat dolor porttitor sed. Proin erat diam, venenatis ac lacinia a, condimentum ac turpis. Fusce eu nisl tempor, feugiat neque vitae, tincidunt est.'),
-  ('Choco', 'Cat', 'American Shorthair', 'Male', 9, 'Small, 13lbs', 1, '', 'Pending', '2022-01-27 12:32:05', 0, 0, 0, 1, 1, 1,
-   'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed blandit facilisis elit, id volutpat dolor porttitor sed. Proin erat diam, venenatis ac lacinia a, condimentum ac turpis. Fusce eu nisl tempor, feugiat neque vitae, tincidunt est.'),
-   ('Rab', 'Rabbit', 'Lionhead rabbit', 'Male', 2, 'Small, 4lbs', 1, '', 'Available', '2022-01-27 12:32:05', 0, 0, 0, 0, 0, 0,
-   'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed blandit facilisis elit, id volutpat dolor porttitor sed. Proin erat diam, venenatis ac lacinia a, condimentum ac turpis. Fusce eu nisl tempor, feugiat neque vitae, tincidunt est.'),
-   ('Ham', 'Hamster', 'Syrian hamsters', 'Female', 2, 'Small, 3lbs', 2, '', 'Pending', '2022-01-27 12:32:05', 0, 0, 0, 0, 0, 0,
-   'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed blandit facilisis elit, id volutpat dolor porttitor sed. Proin erat diam, venenatis ac lacinia a, condimentum ac turpis. Fusce eu nisl tempor, feugiat neque vitae, tincidunt est.');
-
+  ('Rab', 'Rabbit', 'Lionhead rabbit', 'Male', 2, 'Small, 4lbs', 1, '/images/petimage-testRabbit.png', 'Available', '2022-01-27 12:32:05', 0, 0, 0, 0, 0, 0,
+   'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed blandit facilisis elit, id volutpat dolor porttitor sed. Proin erat diam, venenatis ac lacinia a, condimentum ac turpis. Fusce eu nisl tempor, feugiat neque vitae, tincidunt est.')
 INSERT INTO User (FirstName, LastName, EmailAddress, Password, Address, ZipCode, DistancePreference, LastUpdated)
 VALUES
   ('Esther', 'Lin', 'linhsin@oregonstate.edu', 'password', NULL, 10001, NULL, '2022-01-27 12:32:05');
