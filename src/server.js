@@ -5,6 +5,7 @@ const cors = require('cors');
 const petsController = require('./controllers/petsController');
 const sheltersController = require('./controllers/sheltersController');
 const usersController = require('./controllers/usersController');
+const imageController = require('./controllers/imageController');
 const { db } = require("./models/db.js");
 const { requireAuth } = require('./utils/auth');
 
@@ -20,6 +21,11 @@ router.use(bodyParser.json());
 // allows CORS used in /login
 router.use(cors());
 
+// set static folder
+var path = require('path');
+app.use("/images",express.static(path.join(__dirname, '/../public')));
+console.log(path.join(__dirname, '/../public'))
+
 /* API endpoints */
 app.get('/', (req, res) => {
   res.send('Hello, world!');
@@ -31,6 +37,10 @@ router.post('/pets', requireAuth, petsController.postPet);  //temp middleware
 router.get('/pets/:petID', petsController.getPet);
 router.delete('/pets/:petID', requireAuth, petsController.deletePet); //temp middleware
 router.patch('/pets/:petID', requireAuth, petsController.patchPet); //temp middleware
+// Pet Images
+router.post('/pets/imgupload', imageController.send);
+
+router.get('/breeds', petsController.getBreeds);
 
 // Shelters
 router.post('/shelters', sheltersController.postShelters);

@@ -4,6 +4,7 @@ DROP TABLE IF EXISTS `PetNewsItem`;
 DROP TABLE IF EXISTS `User`;
 DROP TABLE IF EXISTS `Pet`;
 DROP TABLE IF EXISTS `Shelter`;
+DROP TABLE IF EXISTS `PetBreed`;
 
 
 -- Create Shelter table
@@ -90,4 +91,11 @@ CREATE TABLE `UserPet` (
  `PetID` int not null,
   CONSTRAINT `UserID_fk2` FOREIGN KEY (`UserID`) REFERENCES `User` (`UserID`) ON DELETE CASCADE,
   CONSTRAINT `PetID_fk2` FOREIGN KEY (`PetID`) REFERENCES `Pet` (`PetID`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- Create PetBreed table
+CREATE TABLE `PetBreed` (
+ `TypeOfAnimal` varchar(100) not null,
+ `Breed` varchar(100) not null,
+  PRIMARY KEY (`TypeOfAnimal`, `Breed`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
