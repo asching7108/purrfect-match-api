@@ -41,5 +41,5 @@ VALUES
   ('Cat', 'Other'),
   ('Dog', 'Golden Retriever'),
   ('Dog', 'Mixed'),
-  ('Dog', ' Other'),
+  ('Dog', 'Other'),
   ('Other', 'Other');
