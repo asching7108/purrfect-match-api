@@ -1,11 +1,12 @@
 const sheltersModel = require('../models/sheltersModel.js');
 const { inputValidation } = require("../utils/tools.js");
 const { ContentTypeError, PropNullorEmptyError, PropRequiredError } = require("../utils/errors.js");
-const { createShelters, getShelterByID, deleteShelterByID, updateShelterByID, getAllPets, verifyShelterLoginCredentials } = sheltersModel;
+const { createShelters, getShelterByID, deleteShelterByID, updateShelterByID, getAllPets, getShelterLoginCredentials } = sheltersModel;
 const { Logger } = require("../utils/log4js.js");
 const log = Logger();
 const jwt = require('jsonwebtoken');
 const { SECRET } = require('../config');
+const { isCorrectPassword } = require('../utils/auth');
 
 const postShelters = async (req, res, next) => {
   log.debug("Calling postShelters...Verifying user inputs...");
@@ -150,14 +151,12 @@ const loginShelter = async (req, res, next) => {
   if (success) {
     const { email, password } = req.body;
 
-    await verifyShelterLoginCredentials(req.app.get('db'), email, password)
+    await getShelterLoginCredentials(req.app.get('db'), email)
       .then((dbResponse) => {
-
-        // Verify email and password
         if (dbResponse.length !== 1) {
           // There should only ever be one shelter with the same email and pw
           res.status(401).send('Unauthorized');
-        } else {
+        } else if (isCorrectPassword(dbResponse[0].Password, password)) {
           // Create JWT
           const token = jwt.sign(
             {
@@ -169,6 +168,8 @@ const loginShelter = async (req, res, next) => {
 
           // Return token
           res.send({ token: token });
+        } else {
+          res.status(401).send('Unauthorized');
         }
       })
       .catch((e) => {

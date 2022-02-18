@@ -7,9 +7,9 @@ SET FOREIGN_KEY_CHECKS = 1;
 
 INSERT INTO Shelter (ShelterName, Address, EmailAddress, Password, PhoneNumber, Website, LastUpdated)
 VALUES
-  ('Purrfect Cat Rescue Group', '101 Banana Rd, Bellevue, WA 98004', 'info@purrfect-cat.com', 'password', 1234567890, 'https://purrfect-cat.com', '2022-01-27 12:32:05'),
-  ('Best Friends Shelter', '123 Sugartown Rd, Paoli, PA 19301', 'bfs@bfs.com', 'password', 1112223456, 'https://bfs.com', '2022-01-27 12:32:05'),
-  ('Paws Animal Shelter', '123 Sugartown Rd, Portland, OR 97206', 'admin@paws.com', 'password', 1111221156, 'https://paws-animal-shelter.com', '2022-01-27 12:32:05');
+  ('Purrfect Cat Rescue Group', '101 Banana Rd, Bellevue, WA 98004', 'info@purrfect-cat.com', '$2a$10$XKPH0cYVDS8YXlm17.eLze/heo7Rj1PWwI37H0w0YUHixTLtD.y7u', 1234567890, 'https://purrfect-cat.com', '2022-01-27 12:32:05'),
+  ('Best Friends Shelter', '123 Sugartown Rd, Paoli, PA 19301', 'bfs@bfs.com', '$2a$10$k.vVXy3ZvhPLjOdmNlU37u44hQj3M58Ddb4s/xHDTkJOzsZWjelJi', 1112223456, 'https://bfs.com', '2022-01-27 12:32:05'),
+  ('Paws Animal Shelter', '123 Sugartown Rd, Portland, OR 97206', 'admin@paws.com', '$2a$10$oZqEv1YR1NGdry8u05M.5.K.AAK/El4IsiHzAuyhNz7uEvy0w3VUi', 1111221156, 'https://paws-animal-shelter.com', '2022-01-27 12:32:05');
 
 INSERT INTO Pet (Name, TypeOfAnimal, Breed, Sex, Age, Size, ShelterID, Picture, Availability, LastUpdated, GoodWithOtherAnimals, GoodWithChildren, MustBeLeashed, Neutered, Vaccinated, HouseTrained, Description)
 VALUES
@@ -32,7 +32,7 @@ VALUES
 
 INSERT INTO User (FirstName, LastName, EmailAddress, Password, Address, ZipCode, DistancePreference, LastUpdated)
 VALUES
-  ('Esther', 'Lin', 'linhsin@oregonstate.edu', 'password', NULL, 10001, NULL, '2022-01-27 12:32:05');
+  ('Esther', 'Lin', 'linhsin@oregonstate.edu', '$2a$10$UEYuur6YO08R8mgcHL8wP.DDtExNajJD/m8plsHFSjy45oNDdEUgC', NULL, 10001, NULL, '2022-01-27 12:32:05');
 
 INSERT INTO PetNewsItem (PetID, DatePosted, NewsItem)
 VALUES
