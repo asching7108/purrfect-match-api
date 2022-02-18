@@ -137,7 +137,7 @@ const updatePetById = async (db, petID, petToUpdate, original) => {
     petToUpdate.houseTrained, original.HouseTrained,
     petToUpdate.description, original.Description,
     petID,
-    petToUpdate.ShelterID
+    petToUpdate.shelterID
   ];
   log.debug("Running updatePetById sql = " + mysql.format(sql, values));
   return new Promise((resolve, reject) => {
