@@ -1,6 +1,7 @@
 const mysql = require("mysql");
 const { Logger } = require("../utils/log4js.js");
 const log = Logger();
+const { hashPassword } = require('../utils/auth');
 
 const createShelters = async (db, params) => {
 
@@ -11,7 +12,7 @@ const createShelters = async (db, params) => {
     params.shelterName,
     params.address,
     params.emailAddress,
-    params.password,
+    hashPassword(params.password),
     params.phoneNumber,
     params.website
   ];
@@ -104,9 +105,9 @@ const getAllPets = async (db, shelterID) => {
   });
 }
 
-const verifyShelterLoginCredentials = async (db, email, password) => {
-  const sql = `SELECT ShelterID FROM Shelter WHERE EmailAddress = ? AND Password = ?`;
-  const values = [email, password];
+const getShelterLoginCredentials = async (db, email) => {
+  const sql = `SELECT ShelterID, Password FROM Shelter WHERE EmailAddress = ?`;
+  const values = [email];
   return new Promise((resolve, reject) => {
     db.query(sql, values, (err, res, fields) => {
       if (err) {
@@ -124,5 +125,5 @@ module.exports = {
   deleteShelterByID,
   updateShelterByID,
   getAllPets,
-  verifyShelterLoginCredentials
+  getShelterLoginCredentials
 };

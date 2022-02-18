@@ -1,6 +1,7 @@
 const { SECRET } = require('../config');
 const { AuthorizationError } = require('./errors');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 const { Logger } = require("../utils/log4js.js");
 const log = Logger();
 
@@ -42,4 +43,18 @@ function requireAuth(req, res, next) {
   }
 }
 
-module.exports = { requireAuth };
+function hashPassword(password) {
+  let salt = bcrypt.genSaltSync(10);
+  var hashedPassword = bcrypt.hashSync(password, salt);
+  return hashedPassword
+}
+
+function isCorrectPassword(hashedPassword, inputPassword) {
+  return bcrypt.compareSync(inputPassword, hashedPassword)
+}
+
+module.exports = {
+  requireAuth,
+  hashPassword,
+  isCorrectPassword
+};

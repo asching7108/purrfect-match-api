@@ -3,7 +3,7 @@ const {
   getUserByID,
   updateUserByID,
   deleteUserByID,
-  verifyLoginCredentials
+  getLoginCredentials
 } = require('../models/usersModel');
 
 const { inputValidation } = require('../utils/tools');
@@ -12,6 +12,7 @@ const { Logger } = require("../utils/log4js.js");
 const log = Logger();
 const jwt = require('jsonwebtoken');
 const { SECRET } = require('../config');
+const { isCorrectPassword } = require('../utils/auth');
 
 
 const postUsers = async (req, res, next) => {
@@ -63,8 +64,6 @@ const getUser = async (req, res, next) => {
 const patchUser = async (req, res, next) => {
   log.debug("Calling patchUser...Verifying user inputs...");
 
-  // TODO: add auth
-
   let success = true;
   try {
     //check content type
@@ -92,8 +91,6 @@ const patchUser = async (req, res, next) => {
 
 const deleteUser = async (req, res, next) => {
   log.debug("Calling deleteUser...");
-
-  // TODO: add auth
 
   // UserPet and UserPreference rows are deleted when user is deleted
   await deleteUserByID(req.app.get('db'), req.params.userID)
@@ -133,14 +130,12 @@ const loginUser = async (req, res, next) => {
   if (success) {
     const { email, password } = req.body;
 
-    await verifyLoginCredentials(req.app.get('db'), email, password)
+    await getLoginCredentials(req.app.get('db'), email)
       .then((dbResponse) => {
-
-        // Verify email and password
         if (dbResponse.length !== 1) {
           // There should only ever be one user with the same email and pw
           res.status(401).send('Unauthorized');
-        } else {
+        } else if (isCorrectPassword(dbResponse[0].Password, password)) {
           // Create JWT
           const token = jwt.sign(
             {
@@ -152,6 +147,9 @@ const loginUser = async (req, res, next) => {
 
           // Return token
           res.send({ token: token });
+
+        } else {
+          res.status(401).send('Unauthorized');
         }
       })
       .catch((e) => {
