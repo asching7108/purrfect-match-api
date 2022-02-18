@@ -175,7 +175,6 @@ const postPetNews = async (req, res, next) => {
     errList = inputValidation.getNullorEmpty(res, req.body);
     if (errList.length != 0) throw new PropNullorEmptyError(errList);
   } catch (err) {
-    console.log(err);
     return res.status(err.statusCode).json({ error: err.message });
   }
 
