@@ -40,6 +40,12 @@ router.patch('/pets/:petID', requireAuth, petsController.patchPet);
 // Pet Images
 router.post('/pets/imgupload', imageController.send);
 
+// Pet News Items
+router.get('/news', petsController.getNews);
+router.post('/pets/:petID/news', requireAuth, petsController.postPetNews);  //temp middleware
+router.get('/pets/:petID/news', petsController.getPetNews);
+router.delete('/pets/:petID/news/:newsItemID', requireAuth, petsController.deletePetNews); //temp middleware
+
 router.get('/breeds', petsController.getBreeds);
 
 // Shelters
