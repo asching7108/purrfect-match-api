@@ -63,7 +63,7 @@ const updateUserByID = async (db, userID, params) => {
   const values = [
     params.firstName, original[0].FirstName,
     params.lastName, original[0].LastName,
-    params.emailAddress, original[0].EmailAddress,
+    params.email, original[0].EmailAddress,
     password, original[0].Password,
     address,
     params.zipCode, original[0].ZipCode,
