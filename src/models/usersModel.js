@@ -56,12 +56,15 @@ const updateUserByID = async (db, userID, params) => {
   // Only change optional values is explicitly added in req.body
   const address = params.hasOwnProperty('address') ? params.address : original[0].Address;
   const distancePreference = params.hasOwnProperty('distancePreference') ? params.distancePreference : original[0].DistancePreference;
+  
+  // Handle password hashing if password exists
+  const password = params.password ? hashPassword(params.password) : null;
 
   const values = [
     params.firstName, original[0].FirstName,
     params.lastName, original[0].LastName,
     params.emailAddress, original[0].EmailAddress,
-    params.password, original[0].Password,
+    password, original[0].Password,
     address,
     params.zipCode, original[0].ZipCode,
     distancePreference,
