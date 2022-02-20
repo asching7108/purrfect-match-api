@@ -9,7 +9,8 @@ const storage = multer.diskStorage({
     cb(null, DIR)
   },
   filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9) + path.extname(file.originalname)
+    let index = file.mimetype.indexOf("/")
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9) + "." + file.mimetype.substring(index+1);
     cb(null, file.fieldname + '-' + uniqueSuffix)
   }
 })
@@ -36,7 +37,12 @@ module.exports.send = (req, res, next) => {
     if (err) {
       return res.status(400).json({ error: err.message });
     }
-    res.status(201).send({ "fileName": req.file.filename, "path": "/" + (req.file.path).replace('\\', '/').replace('public', 'images') })
+    if(req.file == undefined){
+      res.status(400).json({ error: "Please save image!" });
+    }
+    else{
+      res.status(201).send({ "fileName": req.file.filename, "path": "/" + (req.file.path).replace('\\', '/').replace('public', 'images') })
+    }
   };
 
   middleware(req, res, controller); //callback
