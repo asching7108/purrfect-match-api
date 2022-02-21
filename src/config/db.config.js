@@ -2,9 +2,9 @@
 module.exports = {
   HOST: "localhost",
   PORT: '3306',
-  USER: "[YOUR_USERNAME]",
-  PASSWORD: "[YOUR_PASSWORD]",
-  DB: "purrfect-match_dev",
+  USER: "houdeka",
+  PASSWORD: "Password!",
+  DB: "purrfect_match_local",
   DEV_HOST: "localhost",
   DEV_PORT: '3306',
   DEV_USER: "[YOUR_DEV_USERNAME]",
