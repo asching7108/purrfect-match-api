@@ -16,12 +16,6 @@ const postPreference = async (req, res, next) => {
   try {
     // content type
     if (!inputValidation.checkContentType(req, res)) throw new ContentTypeError();
-    // all required attributes are provided
-    let errList = inputValidation.getMissingAttrs(res, req.body, ["type", "selection"]);
-    if (errList.length != 0) throw new PropRequiredError(errList);
-    // check null values
-    errList = inputValidation.getNullorEmpty(res, req.body);
-    if (errList.length != 0) throw new PropNullorEmptyError(errList);
   } catch (err) {
     success = false;
     res.status(err.statusCode).send(err.message);

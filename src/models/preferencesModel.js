@@ -3,13 +3,17 @@ const { Logger } = require("../utils/log4js.js");
 const log = Logger();
 
 const createPreference = async (db, userID, params) => {
-  const sql = 'INSERT INTO UserPreference (UserID, PreferenceType, PreferenceSelection) '
-    + 'VALUES (?, ?, ?)';
+  const sql = 'INSERT INTO UserPreference (UserID, TypeOfAnimal, Breed, Sex, MinAge, MaxAge, More) '
+    + 'VALUES (?, ?, ?, ?, ?, ?, ?)';
 
   const vals = [
     userID,
-    params.type,
-    params.selection,
+    JSON.stringify(params.typeOfAnimal),
+    JSON.stringify(params.breed),
+    params.sex,
+    params.minAge,
+    params.maxAge,
+    JSON.stringify(params.more)
   ];
   log.debug("Running createPreference sql = " + mysql.format(sql, vals));
   return new Promise((resolve, reject) => {
