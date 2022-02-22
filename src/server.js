@@ -67,6 +67,7 @@ router.delete('/users/:userID', requireAuth, usersController.deleteUser);
 // User Preferences
 router.post('/users/:userID/prefs', requireAuth, preferencesController.postPreference);
 router.get('/users/:userID/prefs', requireAuth, preferencesController.getUserPreferences);
+router.patch('/users/:userID/prefs', requireAuth, preferencesController.patchPreference);
 router.delete('/users/:userID/prefs/:preferenceID', requireAuth, preferencesController.deletePreference);
 router.delete('/users/:userID/prefs', requireAuth, preferencesController.deleteAllUserPreferences);
 

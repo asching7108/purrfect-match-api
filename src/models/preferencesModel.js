@@ -27,12 +27,44 @@ const createPreference = async (db, userID, params) => {
   });
 }
 
-const getAllUserPreferences = async (db, userID) => {
+const getPreferencesByUserID = async (db, userID) => {
   const sql = 'SELECT * FROM UserPreference WHERE UserID = ?';
   const vals = [userID];
-  log.debug("Running getAllUserPreferences sql = " + mysql.format(sql, vals));
+  log.debug("Running getPreferencesByUserID sql = " + mysql.format(sql, vals));
   return new Promise((resolve, reject) => {
     db.query(sql, vals, (err, res, fields) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(res);
+      }
+    });
+  });
+}
+
+const updatePreferences = async (db, userID, params) => {
+  //get original values
+  let original = await getPreferencesByUserID(db, userID);
+  if (original.length == 0) throw new Error('Cannot find user data where userID=' + userID);
+
+  const sql = 'UPDATE UserPreference SET TypeOfAnimal = ?, Breed = ?, Sex = ?, '
+    + 'MinAge = ?, MaxAge = ?, More = ? '
+    + 'WHERE UserID = ?;'
+
+    // Since every input is optional, always change to null if applicable
+  const values = [
+    JSON.stringify(params.typeOfAnimal),
+    JSON.stringify(params.breed),
+    params.sex,
+    params.minAge,
+    params.maxAge,
+    JSON.stringify(params.more),
+    userID
+  ];
+
+  log.debug("Running updatePreferences sql = " + mysql.format(sql, values));
+  return new Promise((resolve, reject) => {
+    db.query(sql, values, (err, res, fields) => {
       if (err) {
         reject(err);
       } else {
@@ -72,7 +104,8 @@ const deletePreferencesByUserID = async (db, userID) => {
 
 module.exports = {
   createPreference,
-  getAllUserPreferences,
+  getPreferencesByUserID,
+  updatePreferences,
   deletePreferenceByID,
   deletePreferencesByUserID
 }
