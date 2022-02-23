@@ -14,7 +14,7 @@ CREATE TABLE `Shelter` (
  `Address` varchar(100) not null,
  `EmailAddress` varchar(100) not null,
  `Password` varchar(100) not null,
- `PhoneNumber` int not null,
+ `PhoneNumber` varchar(10) not null,
  `Website` varchar(255),
  `LastUpdated` datetime not null,
   PRIMARY KEY (`ShelterID`),
