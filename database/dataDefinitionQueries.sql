@@ -78,8 +78,12 @@ CREATE TABLE `PetNewsItem` (
 CREATE TABLE `UserPreference` (
  `UserPreferenceID` int not null AUTO_INCREMENT,
  `UserID` int not null,
- `PreferenceType` varchar(100) not null,
- `PreferenceSelection` varchar(100) not null,
+ `TypeOfAnimal` varchar(255),
+ `Breed` varchar(100),
+ `Sex` varchar(100),
+ `MinAge` int,
+ `MaxAge` int,
+ `More` varchar(255),
   PRIMARY KEY (`UserPreferenceID`),
   CONSTRAINT `UserID_fk` FOREIGN KEY (`UserID`) REFERENCES `User` (`UserID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

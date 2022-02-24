@@ -6,6 +6,7 @@ const petsController = require('./controllers/petsController');
 const sheltersController = require('./controllers/sheltersController');
 const usersController = require('./controllers/usersController');
 const imageController = require('./controllers/imageController');
+const preferencesController = require('./controllers/preferencesController');
 const { db } = require("./models/db.js");
 const { requireAuth } = require('./utils/auth');
 
@@ -62,6 +63,13 @@ router.post('/users', usersController.postUsers);
 router.get('/users/:userID', usersController.getUser);
 router.patch('/users/:userID', requireAuth, usersController.patchUser);
 router.delete('/users/:userID', requireAuth, usersController.deleteUser);
+
+// User Preferences
+router.post('/users/:userID/prefs', requireAuth, preferencesController.postPreference);
+router.get('/users/:userID/prefs', requireAuth, preferencesController.getUserPreferences);
+router.patch('/users/:userID/prefs', requireAuth, preferencesController.patchPreference);
+router.delete('/users/:userID/prefs/:preferenceID', requireAuth, preferencesController.deletePreference);
+router.delete('/users/:userID/prefs', requireAuth, preferencesController.deleteAllUserPreferences);
 
 /* Start server */
 app.use('/', router);
