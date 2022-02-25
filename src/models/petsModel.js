@@ -19,7 +19,8 @@ const retrievePets = async (db, query) => {
               ${query.neutered ? 'AND p.Neutered' : ''}
               ${query.vaccinated ? 'AND p.Vaccinated' : ''}
               ${query.houseTrained ? 'AND p.HouseTrained' : ''}
-              ORDER BY p.PetID`;
+              ORDER BY p.LastUpdated desc
+              ${query.limit ? 'LIMIT ?' : ''}`;
   const values = [];
   if (query.availability) values.push(query.availability);
   if (query.shelterID) values.push(query.shelterID);
@@ -28,6 +29,7 @@ const retrievePets = async (db, query) => {
   if (query.sex) values.push(query.sex);
   if (query.minAge) values.push(query.minAge);
   if (query.maxAge) values.push(query.maxAge);
+  if (query.limit) values.push(parseInt(query.limit));
 
   log.debug("Running retrievePets sql = " + mysql.format(sql, values));
   return new Promise((resolve, reject) => {
