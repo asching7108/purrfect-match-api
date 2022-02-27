@@ -84,6 +84,8 @@ CREATE TABLE `UserPreference` (
  `MinAge` int,
  `MaxAge` int,
  `More` varchar(255),
+ `Distance` varchar(100),
+ `ZipCode` int,
   PRIMARY KEY (`UserPreferenceID`),
   CONSTRAINT `UserID_fk` FOREIGN KEY (`UserID`) REFERENCES `User` (`UserID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

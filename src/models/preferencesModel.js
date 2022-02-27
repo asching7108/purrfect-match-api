@@ -3,8 +3,8 @@ const { Logger } = require("../utils/log4js.js");
 const log = Logger();
 
 const createPreference = async (db, userID, params) => {
-  const sql = 'INSERT INTO UserPreference (UserID, TypeOfAnimal, Breed, Sex, MinAge, MaxAge, More) '
-    + 'VALUES (?, ?, ?, ?, ?, ?, ?)';
+  const sql = 'INSERT INTO UserPreference (UserID, TypeOfAnimal, Breed, Sex, MinAge, MaxAge, More, Distance, ZipCode) '
+    + 'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
   const vals = [
     userID,
@@ -13,7 +13,9 @@ const createPreference = async (db, userID, params) => {
     params.sex,
     params.minAge,
     params.maxAge,
-    JSON.stringify(params.more)
+    JSON.stringify(params.more),
+    JSON.stringify(params.distance),
+    params.zipCode
   ];
   log.debug("Running createPreference sql = " + mysql.format(sql, vals));
   return new Promise((resolve, reject) => {
@@ -48,7 +50,7 @@ const updatePreferences = async (db, userID, params) => {
   if (original.length == 0) throw new Error('Cannot find user data where userID=' + userID);
 
   const sql = 'UPDATE UserPreference SET TypeOfAnimal = ?, Breed = ?, Sex = ?, '
-    + 'MinAge = ?, MaxAge = ?, More = ? '
+    + 'MinAge = ?, MaxAge = ?, More = ? , Distance = ?, ZipCode = ? '
     + 'WHERE UserID = ?;'
 
     // Since every input is optional, always change to null if applicable
@@ -59,6 +61,8 @@ const updatePreferences = async (db, userID, params) => {
     params.minAge,
     params.maxAge,
     JSON.stringify(params.more),
+    JSON.stringify(params.distance),
+    params.zipCode,
     userID
   ];
 
