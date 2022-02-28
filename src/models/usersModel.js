@@ -84,11 +84,54 @@ const updateUserByID = async (db, userID, params) => {
 }
 
 const deleteUserByID = async (db, userID) => {
-
   const sql = 'DELETE FROM User WHERE UserID = ?';
   log.debug("Running deleteUserByID sql = " + mysql.format(sql, userID));
   return new Promise((resolve, reject) => {
     db.query(sql, userID, (err, res, fields) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(res);
+      }
+    });
+  });
+}
+
+const addPetToFavorites = async (db, userID, petID) => {
+  const sql = 'INSERT INTO UserPet (UserID, PetID) VALUES (?, ?)';
+  const values = [userID, petID];
+  log.debug("Running addPetToFavorites sql = " + mysql.format(sql, values));
+  return new Promise((resolve, reject) => {
+    db.query(sql, values, (err, res, fields) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(res);
+      }
+    });
+  });
+}
+
+const getUserFavorites = async (db, userID) => {
+  const sql = 'SELECT PetID FROM UserPet WHERE UserID = ?';
+  log.debug("Running getUserFavorites sql = " + mysql.format(sql, userID));
+  return new Promise((resolve, reject) => {
+    db.query(sql, userID, (err, res, fields) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(res);
+      }
+    });
+  });
+}
+
+const deleteUserFavorite = async (db, userID, petID) => {
+  const sql = 'DELETE FROM UserPet WHERE UserID = ? AND PetID = ?';
+  const values = [userID, petID];
+  log.debug("Running deleteUserFavorites sql = " + mysql.format(sql, values));
+  return new Promise((resolve, reject) => {
+    db.query(sql, values, (err, res, fields) => {
       if (err) {
         reject(err);
       } else {
@@ -118,5 +161,8 @@ module.exports = {
   getUserByID,
   updateUserByID,
   deleteUserByID,
+  addPetToFavorites,
+  getUserFavorites,
+  deleteUserFavorite,
   getLoginCredentials
 }

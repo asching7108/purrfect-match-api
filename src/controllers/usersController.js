@@ -3,8 +3,12 @@ const {
   getUserByID,
   updateUserByID,
   deleteUserByID,
+  addPetToFavorites,
+  getUserFavorites,
+  deleteUserFavorite,
   getLoginCredentials
 } = require('../models/usersModel');
+const { getPetById } = require('../models/petsModel')
 
 const { inputValidation } = require('../utils/tools');
 const { ContentTypeError, PropNullorEmptyError, PropRequiredError } = require("../utils/errors.js");
@@ -109,6 +113,47 @@ const deleteUser = async (req, res, next) => {
     });
 }
 
+const putFavorite = async (req, res, next) => {
+  log.debug("Calling putFavorite...");
+
+    // Ensure pet exists
+    const petsByID = await getPetById(req.app.get('db'), req.params.petID);
+    if (petsByID.length !== 1) return res.status(404).send({Error: 'Pet not found'});
+  
+    try {
+      const dbResponse = await addPetToFavorites(req.app.get('db'), req.params.userID, req.params.petID);
+      return res.status(201).send(dbResponse);
+    } catch (err) {
+      log.error(err);
+      return res.status(500).send({Error: 'Internal Server Error'});
+    }
+}
+
+const getFavorites = async (req, res, next) => {
+  log.debug('Calling getFavorites...');
+
+  try {
+    const dbResponse = await getUserFavorites(req.app.get('db'), req.params.userID);
+    // .map will return a simple list, instead of list of single-attribute objects
+    return res.status(200).send(dbResponse.map(elem => elem.PetID)); 
+  } catch (err) {
+    log.error(err);
+    return res.status(500).send({Error: 'Internal Server Error'});
+  }
+}
+
+const deleteFavorite = async (req, res, next) => {
+  log.debug('Calling deleteFavorite...');
+
+  try {
+    await deleteUserFavorite(req.app.get('db'), req.params.userID, req.params.petID);
+    return res.sendStatus(204);
+  } catch (err) {
+    log.error(err);
+    return res.status(500).send({Error: 'Internal Server Error'});
+  }
+}
+
 const loginUser = async (req, res, next) => {
 
   // input validation
@@ -165,5 +210,8 @@ module.exports = {
   getUser,
   patchUser,
   deleteUser,
+  putFavorite,
+  getFavorites,
+  deleteFavorite,
   loginUser
 }
