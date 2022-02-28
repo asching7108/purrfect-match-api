@@ -75,30 +75,32 @@ const getPets = async (req, res, next) => {
       log.debug("Calculates pet distances...");
       const { distance, zipCode, address } = req.query;
 
-      // if not filtered by distance, returns the result directly
-      if (!distance || (!address && !zipCode)) {
+      // if no address or zip code provided, returns the result directly
+      if (!address && !zipCode) {
         return res.send(dbResponse);
       }
 
-      // gets the lat/lng location of the query
+      // gets the lat/lng location
       let latLng;
       if (address) latLng = await getLatLng(address);
-      if (!latLng) latLng = await getLatLngByZipCode(zipCode);
+      if (!latLng && zipCode) latLng = await getLatLngByZipCode(zipCode);
 
-      // lat/lng location not found
+      // if lat/lng location not found, returns empty list if filtered by distance,
+      // and full result if not
       if (!latLng) {
-        return res.send([]);
+        return distance ? res.send([]) : res.send(dbResponse);
       }
 
       // gets the lat/lng locations and distances of each pet
       const petsLatLng = await getBatchLatLng(dbResponse.map(pet => pet.Address));
       dbResponse = dbResponse.map((pet, i) => {
-        pet.distance = petsLatLng[i] ? getDistance(latLng, petsLatLng[i]) : 9999;
+        pet.Distance = petsLatLng[i] ? getDistance(latLng, petsLatLng[i]) : null;
         return pet;
       });
 
-      // filters the result by distance
-      dbResponse = dbResponse.filter(pet => pet.distance <= distance);
+      // filters the result by distance if filter set
+      if (distance)
+        dbResponse = dbResponse.filter(pet => pet.Distance !== null && pet.Distance <= distance);
 
       res.send(dbResponse);
     })
