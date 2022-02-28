@@ -36,10 +36,11 @@ VALUES
    'Doggo ipsum borkdrive doggorino puggo you are doin me a concern many pats, length boy lotsa pats doggo, you are doing me a frighten puggorino pupperino. heckin bork. ur givin me a spook you are doing me the shock puggorino. Wow such tempt heckin good boys sub woofer I am bekom fat heck blop bork, stop it fren doggo heckin angery woofer much ruin diet ur givin me a spook heckin, very hand that feed shibe doggo heckin angery woofer puggorino what a nice floof. you are doing me the shock long woofer tungg. Shooberino blep heckin good boys doing me a frighten, many pats heck.'),
 
   -- Esther's pets
-
+  ('Yaoyao', 'Cat', 'Domestic Shorthair', 'Male', 6, 'Extra large, 17lbs', 3, '/images/petimage-yaoyao.png', 'Available', '2022-02-28 12:32:05', 0, 0, 0, 1, 1, 1,
+   "Cat ipsum dolor sit amet, relentlessly pursues moth. Leave fur on owners clothes stare at ceiling destroy couch as revenge. Lay on arms while you're using the keyboard be superior but ask for petting, ask for petting for furball roll roll roll lick human with sandpaper tongue. Trip on catnip furrier and even more furrier hairball or sniff catnip and act crazy, lick the plastic bag."),
 
   -- Other
-  ('Rab', 'Other', 'Rabbit', 'Male', 2, 'Small, 4lbs', 1, '/images/petimage-testRabbit.png', 'Available', '2022-01-27 12:32:05', 0, 0, 0, 0, 0, 0,
+  ('Rab', 'Other', 'Rabbit', 'Male', 2, 'Small, 4lbs', 1, '/images/petimage-testRabbit.png', 'Available', '2022-01-27 12:32:05', 0, 1, 0, 1, 1, 1,
    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed blandit facilisis elit, id volutpat dolor porttitor sed. Proin erat diam, venenatis ac lacinia a, condimentum ac turpis. Fusce eu nisl tempor, feugiat neque vitae, tincidunt est.');
 INSERT INTO User (FirstName, LastName, EmailAddress, Password, Address, ZipCode, DistancePreference, LastUpdated)
 VALUES
