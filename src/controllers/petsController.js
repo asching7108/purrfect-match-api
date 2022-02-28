@@ -87,7 +87,7 @@ const getPets = async (req, res, next) => {
 
       // lat/lng location not found
       if (!latLng) {
-        return res.send(dbResponse);
+        return res.send([]);
       }
 
       // gets the lat/lng locations and distances of each pet
