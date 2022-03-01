@@ -73,19 +73,12 @@ const getPets = async (req, res, next) => {
   await retrievePets(req.app.get('db'), req.query)
     .then(async (dbResponse) => {
       log.debug("Calculates pet distances...");
-      const { distance, zipCode, address } = req.query;
-
-      // if no address or zip code provided, returns the result directly
-      if (!address && !zipCode) {
-        return res.send(dbResponse);
-      }
+      const { distance, zipCode } = req.query;
 
       // gets the lat/lng location
-      let latLng;
-      if (address) latLng = await getLatLng(address);
-      if (!latLng && zipCode) latLng = await getLatLngByZipCode(zipCode);
+      const latLng = zipCode ? await getLatLngByZipCode(zipCode) : null;
 
-      // if lat/lng location not found, returns empty list if filtered by distance,
+      // if lat/lng location not found, returns an empty list if filtered by distance,
       // and full result if not
       if (!latLng) {
         return distance ? res.send([]) : res.send(dbResponse);
