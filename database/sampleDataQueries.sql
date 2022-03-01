@@ -22,9 +22,9 @@ VALUES
    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed blandit facilisis elit, id volutpat dolor porttitor sed. Proin erat diam, venenatis ac lacinia a, condimentum ac turpis. Fusce eu nisl tempor, feugiat neque vitae, tincidunt est.'),
   ('Rab', 'Other', 'Rabbit', 'Male', 2, 'Small, 4lbs', 1, '/images/petimage-testRabbit.png', 'Available', '2022-01-27 12:32:05', 0, 0, 0, 0, 0, 0,
    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed blandit facilisis elit, id volutpat dolor porttitor sed. Proin erat diam, venenatis ac lacinia a, condimentum ac turpis. Fusce eu nisl tempor, feugiat neque vitae, tincidunt est.');
-INSERT INTO User (FirstName, LastName, EmailAddress, Password, Address, ZipCode, DistancePreference, LastUpdated)
+INSERT INTO User (FirstName, LastName, EmailAddress, Password, ZipCode, LastUpdated)
 VALUES
-  ('Esther', 'Lin', 'linhsin@oregonstate.edu', '$2a$10$UEYuur6YO08R8mgcHL8wP.DDtExNajJD/m8plsHFSjy45oNDdEUgC', NULL, 10001, NULL, '2022-01-27 12:32:05');
+  ('Esther', 'Lin', 'linhsin@oregonstate.edu', '$2a$10$UEYuur6YO08R8mgcHL8wP.DDtExNajJD/m8plsHFSjy45oNDdEUgC', 10001, '2022-01-27 12:32:05');
 
 INSERT INTO PetNewsItem (PetID, DatePosted, NewsItem)
 VALUES

@@ -54,9 +54,7 @@ CREATE TABLE `User` (
  `LastName` varchar(100) not null,
  `EmailAddress` varchar(100) not null,
  `Password` varchar(100) not null,
- `Address` varchar(255),
  `ZipCode` int not null,
- `DistancePreference` int,
  `LastUpdated` datetime not null,
   PRIMARY KEY (`UserID`),
   CONSTRAINT UNIQUE (`EmailAddress`)
