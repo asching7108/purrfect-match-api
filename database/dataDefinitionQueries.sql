@@ -54,9 +54,7 @@ CREATE TABLE `User` (
  `LastName` varchar(100) not null,
  `EmailAddress` varchar(100) not null,
  `Password` varchar(100) not null,
- `Address` varchar(255),
  `ZipCode` int not null,
- `DistancePreference` int,
  `LastUpdated` datetime not null,
   PRIMARY KEY (`UserID`),
   CONSTRAINT UNIQUE (`EmailAddress`)
@@ -84,6 +82,8 @@ CREATE TABLE `UserPreference` (
  `MinAge` int,
  `MaxAge` int,
  `More` varchar(255),
+ `Distance` varchar(100),
+ `ZipCode` int,
   PRIMARY KEY (`UserPreferenceID`),
   CONSTRAINT `UserID_fk` FOREIGN KEY (`UserID`) REFERENCES `User` (`UserID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

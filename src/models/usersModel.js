@@ -5,17 +5,15 @@ const { hashPassword } = require('../utils/auth');
 
 const createUser = async (db, params) => {
 
-  const sql = 'INSERT INTO User (FirstName, LastName, EmailAddress, Password, Address, ZipCode, DistancePreference, LastUpdated) '
-    + 'VALUES (?, ?, ?, ?, ?, ?, ?, NOW())';
+  const sql = 'INSERT INTO User (FirstName, LastName, EmailAddress, Password, ZipCode, LastUpdated) '
+    + 'VALUES (?, ?, ?, ?, ?, NOW())';
 
   let vals = [
     params.firstName,
     params.lastName,
     params.email,
     hashPassword(params.password),
-    params.address,
-    params.zipCode,
-    params.distancePreference
+    params.zipCode
   ];
   log.debug("Running createUser sql = " + mysql.format(sql, vals));
   return new Promise((resolve, reject) => {
@@ -50,13 +48,9 @@ const updateUserByID = async (db, userID, params) => {
   if (original.length == 0) throw new Error('Cannot find user data where userID=' + userID);
 
   const sql = 'UPDATE User SET FirstName = coalesce(?, ?), LastName = coalesce(?, ?), EmailAddress = coalesce(?, ?), '
-    + 'Password = coalesce(?, ?), Address = ?, ZipCode = coalesce(?, ?), DistancePreference = ?, LastUpdated = NOW() '
+    + 'Password = coalesce(?, ?), ZipCode = coalesce(?, ?), LastUpdated = NOW() '
     + 'WHERE UserID = ?;'
 
-  // Only change optional values is explicitly added in req.body
-  const address = params.hasOwnProperty('address') ? params.address : original[0].Address;
-  const distancePreference = params.hasOwnProperty('distancePreference') ? params.distancePreference : original[0].DistancePreference;
-  
   // Handle password hashing if password exists
   const password = params.password ? hashPassword(params.password) : null;
 
@@ -65,9 +59,7 @@ const updateUserByID = async (db, userID, params) => {
     params.lastName, original[0].LastName,
     params.email, original[0].EmailAddress,
     password, original[0].Password,
-    address,
     params.zipCode, original[0].ZipCode,
-    distancePreference,
     userID
   ];
 

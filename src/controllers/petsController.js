@@ -1,8 +1,37 @@
+const nodeGeocoder = require('node-geocoder');
+const geolib = require('geolib');
 const petsModel = require('../models/petsModel.js');
 const { inputValidation } = require("../utils/tools.js");
 const { ContentTypeError, PropNullorEmptyError, PropRequiredError } = require("../utils/errors.js");
 const { Logger } = require("../utils/log4js.js");
 const log = Logger();
+
+const options = {
+  provider: 'openstreetmap'
+};
+
+const geocoder = nodeGeocoder(options);
+
+const getLatLng = async (address) => {
+  return (await geocoder.geocode({ q: address, country: 'US' }))[0];
+};
+
+const getLatLngByZipCode = async (zipCode) => {
+  return (await geocoder.geocode({ postalcode: zipCode, country: 'US' }))[0];
+};
+
+const getBatchLatLng = async (list) => {
+  return (await geocoder.batchGeocode(list.map(address => { return { q: address, country: 'US' }})))
+    .map(res => res.error ? '' : res.value[0]);
+};
+
+const getDistance = (start, end) => {
+  const distanceInMeter = geolib.getDistance(
+    { latitude: start.latitude, longitude: start.longitude },
+    { latitude: end.latitude, longitude: end.longitude }
+  )
+  return Math.round(geolib.convertDistance(distanceInMeter, 'mi'));
+};
 
 const {
   retrievePets,
@@ -42,7 +71,30 @@ const optionalFields = [
 const getPets = async (req, res, next) => {
   log.debug("Calling getPets...");
   await retrievePets(req.app.get('db'), req.query)
-    .then((dbResponse) => {
+    .then(async (dbResponse) => {
+      log.debug("Calculates pet distances...");
+      const { distance, zipCode } = req.query;
+
+      // gets the lat/lng location
+      const latLng = zipCode ? await getLatLngByZipCode(zipCode) : null;
+
+      // if lat/lng location not found, returns an empty list if filtered by distance,
+      // and full result if not
+      if (!latLng) {
+        return distance ? res.send([]) : res.send(dbResponse);
+      }
+
+      // gets the lat/lng locations and distances of each pet
+      const petsLatLng = await getBatchLatLng(dbResponse.map(pet => pet.Address));
+      dbResponse = dbResponse.map((pet, i) => {
+        pet.Distance = petsLatLng[i] ? getDistance(latLng, petsLatLng[i]) : null;
+        return pet;
+      });
+
+      // filters the result by distance if filter set
+      if (distance)
+        dbResponse = dbResponse.filter(pet => pet.Distance !== null && pet.Distance <= distance);
+
       res.send(dbResponse);
     })
     .catch((e) => {

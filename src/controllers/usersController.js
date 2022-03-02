@@ -25,7 +25,7 @@ const postUsers = async (req, res, next) => {
     let errList = inputValidation.getMissingAttrs(res, req.body, ["firstName", "lastName", "email", "password", "zipCode"]);
     if (errList.length != 0) throw new PropRequiredError(errList);
     // check null values
-    errList = inputValidation.getNullorEmpty(res, req.body, ["address", "distancePreference"]);
+    errList = inputValidation.getNullorEmpty(res, req.body);
     if (errList.length != 0) throw new PropNullorEmptyError(errList);
   } catch (err) {
     success = false;
@@ -69,7 +69,7 @@ const patchUser = async (req, res, next) => {
     //check content type
     if (!inputValidation.checkContentType(req, res)) throw new ContentTypeError();
     //check null values
-    errList = inputValidation.getNullorEmpty(res, req.body, ["address", "distancePreference"]);
+    errList = inputValidation.getNullorEmpty(res, req.body);
     if (errList.length != 0) throw new PropNullorEmptyError(errList);
   } catch (err) {
     success = false;
