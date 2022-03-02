@@ -45,9 +45,9 @@ const retrievePets = async (db, query) => {
 
 const createNewPet = async (db, newPet) => {
   const sql = 'INSERT INTO Pet (Name, TypeOfAnimal, Breed, Sex, Age, Size, ShelterID, '
-            + 'Picture, Availability, GoodWithOtherAnimals, GoodWithChildren, '
-            + 'MustBeLeashed, Neutered, Vaccinated, HouseTrained, Description, '
-            + 'LastUpdated) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())';
+    + 'Picture, Availability, GoodWithOtherAnimals, GoodWithChildren, '
+    + 'MustBeLeashed, Neutered, Vaccinated, HouseTrained, Description, '
+    + 'LastUpdated) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())';
   const values = [
     newPet.name,
     newPet.typeOfAnimal,
@@ -80,8 +80,8 @@ const createNewPet = async (db, newPet) => {
 
 const getPetById = async (db, petID) => {
   const sql = 'SELECT p.*, s.ShelterName, s.Address, s.EmailAddress, s.PhoneNumber, s.Website '
-            + 'FROM Pet p INNER JOIN Shelter s ON p.ShelterID = s.ShelterID '
-            + 'WHERE PetID = ?';
+    + 'FROM Pet p INNER JOIN Shelter s ON p.ShelterID = s.ShelterID '
+    + 'WHERE PetID = ?';
   const values = [petID];
   log.debug("Running getPetById sql = " + mysql.format(sql, values));
   return new Promise((resolve, reject) => {
@@ -115,13 +115,13 @@ const updatePetById = async (db, petID, petToUpdate, original) => {
   const age = petToUpdate.hasOwnProperty('age') ? petToUpdate.age : original.Age;
   // use coalesce() to avoid 'Column ... cannot be null' error
   const sql = 'UPDATE Pet SET Name = ?, TypeOfAnimal = coalesce(?, ?), Breed = coalesce(?, ?), '
-            + 'Sex = coalesce(?, ?), Age = ?, Size = coalesce(?, ?), '
-            + 'Picture = coalesce(?, ?), Availability = coalesce(?, ?), '
-            + 'GoodWithOtherAnimals = coalesce(?, ?), GoodWithChildren = coalesce(?, ?), '
-            + 'MustBeLeashed = coalesce(?, ?), Neutered = coalesce(?, ?), '
-            + 'Vaccinated = coalesce(?, ?), HouseTrained = coalesce(?, ?), '
-            + 'Description = coalesce(?, ?), LastUpdated = NOW() '
-            + 'WHERE PetID = ? AND ShelterID = ?';
+    + 'Sex = coalesce(?, ?), Age = ?, Size = coalesce(?, ?), '
+    + 'Picture = coalesce(?, ?), Availability = coalesce(?, ?), '
+    + 'GoodWithOtherAnimals = coalesce(?, ?), GoodWithChildren = coalesce(?, ?), '
+    + 'MustBeLeashed = coalesce(?, ?), Neutered = coalesce(?, ?), '
+    + 'Vaccinated = coalesce(?, ?), HouseTrained = coalesce(?, ?), '
+    + 'Description = coalesce(?, ?), LastUpdated = NOW() '
+    + 'WHERE PetID = ? AND ShelterID = ?';
   const values = [
     name,
     petToUpdate.typeOfAnimal, original.TypeOfAnimal,
@@ -157,10 +157,13 @@ const getAllNews = async (db, query) => {
   const sql = `SELECT i.*, p.*, s.ShelterName FROM PetNewsItem i
               INNER JOIN Pet p ON i.PetID = p.PetID
               INNER JOIN Shelter s ON p.ShelterID = s.ShelterID
-              ORDER BY i.DatePosted DESC`;
-  log.debug("Running getAllNews sql = " + mysql.format(sql));
+              ORDER BY i.DatePosted DESC
+              ${query.limit ? 'LIMIT ?' : ''}`;
+  const values = [];
+  if (query.limit) values.push(parseInt(query.limit));
+  log.debug("Running getAllNews sql = " +mysql.format(sql, values));
   return new Promise((resolve, reject) => {
-    db.query(sql, (err, res, fields) => {
+    db.query(sql, values, (err, res, fields) => {
       if (err) {
         reject(err);
       } else {
@@ -172,7 +175,7 @@ const getAllNews = async (db, query) => {
 
 const createPetNews = async (db, petID, newsItem) => {
   const sql = 'INSERT INTO PetNewsItem (PetID, NewsItem, DatePosted) '
-            + 'VALUES (?, ?, NOW())';
+    + 'VALUES (?, ?, NOW())';
   const values = [petID, newsItem];
   log.debug("Running createPetNews sql = " + mysql.format(sql, values));
   return new Promise((resolve, reject) => {
