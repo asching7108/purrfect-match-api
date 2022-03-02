@@ -63,6 +63,9 @@ router.post('/users', usersController.postUsers);
 router.get('/users/:userID', usersController.getUser);
 router.patch('/users/:userID', requireAuth, usersController.patchUser);
 router.delete('/users/:userID', requireAuth, usersController.deleteUser);
+router.put('/users/:userID/favorites/:petID', requireAuth, usersController.putFavorite);
+router.get('/users/:userID/favorites', usersController.getFavorites);
+router.delete('/users/:userID/favorites/:petID', requireAuth, usersController.deleteFavorite);
 
 // User Preferences
 router.post('/users/:userID/prefs', requireAuth, preferencesController.postPreference);
