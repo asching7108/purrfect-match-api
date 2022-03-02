@@ -161,7 +161,7 @@ const getAllNews = async (db, query) => {
               ${query.limit ? 'LIMIT ?' : ''}`;
   const values = [];
   if (query.limit) values.push(parseInt(query.limit));
-  log.debug("Running getAllNews sql = " +mysql.format(sql, values));
+  log.debug("Running getAllNews sql = " + mysql.format(sql, values));
   return new Promise((resolve, reject) => {
     db.query(sql, values, (err, res, fields) => {
       if (err) {
