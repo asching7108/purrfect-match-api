@@ -75,13 +75,13 @@ const getPets = async (req, res, next) => {
       log.debug("Calculates pet distances...");
       const { distance, zipCode } = req.query;
 
-      // only performs the calculation if a distance is specified
-      if (!distance) {
+      // only performs the calculation if a distance and a zip code is specified
+      if (!distance || !zipCode) {
         return res.send(dbResponse);
       }
       
       // gets the lat/lng location
-      const latLng = zipCode ? await getLatLngByZipCode(zipCode) : null;
+      const latLng = await getLatLngByZipCode(zipCode);
 
       // if lat/lng location not found, returns an empty list
       if (!latLng) {
