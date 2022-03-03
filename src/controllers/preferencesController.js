@@ -7,7 +7,7 @@ const {
 } = require('../models/preferencesModel');
 
 const { inputValidation } = require('../utils/tools');
-const { ContentTypeError, PropNullorEmptyError, PropRequiredError } = require("../utils/errors.js");
+const { ContentTypeError } = require("../utils/errors.js");
 const { Logger } = require("../utils/log4js.js");
 const log = Logger();
 

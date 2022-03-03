@@ -7,7 +7,7 @@ describe('shelters', () => {
 
   let r = Math.floor(Math.random() * 10000);
 
-	before('set db instance', () => {
+  before('set db instance', () => {
     app.set('db', devDb);
   })
 
@@ -170,7 +170,7 @@ describe('shelters', () => {
   it('GET /shelters/3/pets no pet data responds 200', () => {
     return supertest(app)
       .get('/shelters/3/pets') //<--change shelterID if the database doesn't have it
-      .expect(200,[]);
+      .expect(200, []);
   });
 
   it('GET /shelters/9999/pets no shelter 404', () => {

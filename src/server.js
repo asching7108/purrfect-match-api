@@ -24,7 +24,7 @@ router.use(cors());
 
 // set static folder
 var path = require('path');
-app.use("/images",express.static(path.join(__dirname, '/../public')));
+app.use("/images", express.static(path.join(__dirname, '/../public')));
 console.log(path.join(__dirname, '/../public'))
 
 /* API endpoints */

@@ -4,7 +4,6 @@ const log = Logger();
 const { hashPassword } = require('../utils/auth');
 
 const createUser = async (db, params) => {
-
   const sql = 'INSERT INTO User (FirstName, LastName, EmailAddress, Password, ZipCode, LastUpdated) '
     + 'VALUES (?, ?, ?, ?, ?, NOW())';
 
@@ -28,7 +27,6 @@ const createUser = async (db, params) => {
 }
 
 const getUserByID = async (db, userID) => {
-
   const sql = 'SELECT * FROM User WHERE UserID = ?'
   log.debug("Running getUserByID sql = " + mysql.format(sql, userID));
   return new Promise((resolve, reject) => {
@@ -146,7 +144,6 @@ const getLoginCredentials = async (db, email) => {
     });
   });
 }
-
 
 module.exports = {
   createUser,

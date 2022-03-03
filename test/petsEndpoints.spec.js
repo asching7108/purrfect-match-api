@@ -86,7 +86,7 @@ describe('pets', () => {
   it('POST /pets responds 415 (incorrect content-type)', () => {
     return supertest(app)
       .post('/pets')
-      .send('newPet: new pet' )
+      .send('newPet: new pet')
       .set('Content-Type', 'text')
       .expect(415, "Incorrect content-type.")
   });
@@ -147,9 +147,8 @@ describe('pets', () => {
   it('PATCH /pets responds 415 (incorrect content-type)', () => {
     return supertest(app)
       .patch('/pets/3')
-      .send('petToUpdate: new pet' )
+      .send('petToUpdate: new pet')
       .set('Content-Type', 'text')
       .expect(415, "Incorrect content-type.")
   });
-
 });
