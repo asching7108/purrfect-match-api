@@ -75,26 +75,44 @@ const getPets = async (req, res, next) => {
       log.debug("Calculates pet distances...");
       const { distance, zipCode } = req.query;
 
+      // only performs the calculation if a distance and a zip code is specified
+      if (!distance || !zipCode) {
+        return res.send(dbResponse);
+      }
+      
       // gets the lat/lng location
-      const latLng = zipCode ? await getLatLngByZipCode(zipCode) : null;
+      const latLng = await getLatLngByZipCode(zipCode);
 
-      // if lat/lng location not found, returns an empty list if filtered by distance,
-      // and full result if not
+      // if lat/lng location not found, returns an empty list
       if (!latLng) {
-        return distance ? res.send([]) : res.send(dbResponse);
+        return res.send([]);
       }
 
-      // gets the lat/lng locations and distances of each pet
-      const petsLatLng = await getBatchLatLng(dbResponse.map(pet => pet.Address));
-      dbResponse = dbResponse.map((pet, i) => {
-        pet.Distance = petsLatLng[i] ? getDistance(latLng, petsLatLng[i]) : null;
+      // gets the lat/lng locations and distances of each shelter
+      const shelters = {};
+      dbResponse.map(pet => {
+        if (!shelters[pet.ShelterID]) {
+          shelters[pet.ShelterID] = pet.Address;
+        }
+      });
+      for (const shelterID in shelters) {
+        let shelterLatLng = await getLatLng(shelters[shelterID]);
+        if (!shelterLatLng) {
+          const shelterZipCode = Number(shelters[shelterID].slice(-5));
+          if (Number.isInteger(shelterZipCode)) {
+            shelterLatLng = await getLatLngByZipCode(shelterZipCode);
+          }
+        }  
+        // gets the distance between the given zip code and the shelter
+        shelters[shelterID] = shelterLatLng ? getDistance(latLng, shelterLatLng) : null;
+      }
+
+      dbResponse = dbResponse.map(pet => {
+        pet.Distance = shelters[pet.ShelterID];
         return pet;
       });
 
-      // filters the result by distance if filter set
-      if (distance)
-        dbResponse = dbResponse.filter(pet => pet.Distance !== null && pet.Distance <= distance);
-
+      dbResponse = dbResponse.filter(pet => pet.Distance !== null && pet.Distance <= distance);
       res.send(dbResponse);
     })
     .catch((e) => {
