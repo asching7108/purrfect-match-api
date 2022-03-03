@@ -209,7 +209,7 @@ const patchPet = async (req, res, next) => {
 
 const getNews = async (req, res, next) => {
   log.debug("Calling getNews...");
-  await getAllNews(req.app.get('db'))
+  await getAllNews(req.app.get('db'),req.query)
     .then((dbResponse) => {
       res.send(dbResponse);
     })
