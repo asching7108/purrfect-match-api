@@ -1,4 +1,6 @@
 const sheltersModel = require('../models/sheltersModel.js');
+const petsModel = require('../models/petsModel.js');
+const petsController = require('./petsController');
 const { inputValidation } = require("../utils/tools.js");
 const { ContentTypeError, PropNullorEmptyError, PropRequiredError } = require("../utils/errors.js");
 const { createShelters, getShelterByID, deleteShelterByID, updateShelterByID, getAllPets, getShelterLoginCredentials } = sheltersModel;
@@ -83,11 +85,32 @@ const updateShelter = async (req, res, next) => {
 
 const deleteShelter = async (req, res, next) => {
   log.debug("Calling deleteShelter...");
+  
+  //get image paths to delete
+  let paths = []
+  await petsModel.retrievePets(req.app.get('db'), {"shelterID": req.params.shelterID})
+  .then((dbResponse) => {
+    for (let x in dbResponse) {
+      paths.push(dbResponse[x].Picture)
+   }
+  })
+  .catch((e) => {
+    log.error(e);
+    res.sendStatus(500);
+    next(e);
+  });
+
   //ShelterID is ON DELETE CASCADE, If a shelter is removed, those PET records associated with the ShelterID will be removed automatically
   await deleteShelterByID(req.app.get('db'), req.params.shelterID)
     .then((dbResponse) => {
       if (dbResponse.affectedRows == 0) res.sendStatus(404);
-      else if (dbResponse.affectedRows == 1) res.sendStatus(204);
+      else if (dbResponse.affectedRows == 1) {
+        //delete images
+        for (let i in paths) {
+          petsController.removeImageFile(paths[i])
+       }
+        res.sendStatus(204);
+      }
       else {
         log.error(res);
         res.sendStatus(500);

@@ -5,6 +5,8 @@ const { inputValidation } = require("../utils/tools.js");
 const { ContentTypeError, PropNullorEmptyError, PropRequiredError } = require("../utils/errors.js");
 const { Logger } = require("../utils/log4js.js");
 const log = Logger();
+const fs = require('fs')
+const DIR = './public/'
 
 const options = {
   provider: 'openstreetmap'
@@ -21,7 +23,7 @@ const getLatLngByZipCode = async (zipCode) => {
 };
 
 const getBatchLatLng = async (list) => {
-  return (await geocoder.batchGeocode(list.map(address => { return { q: address, country: 'US' }})))
+  return (await geocoder.batchGeocode(list.map(address => { return { q: address, country: 'US' } })))
     .map(res => res.error ? '' : res.value[0]);
 };
 
@@ -79,7 +81,7 @@ const getPets = async (req, res, next) => {
       if (!distance || !zipCode) {
         return res.send(dbResponse);
       }
-      
+
       // gets the lat/lng location
       const latLng = await getLatLngByZipCode(zipCode);
 
@@ -102,7 +104,7 @@ const getPets = async (req, res, next) => {
           if (Number.isInteger(shelterZipCode)) {
             shelterLatLng = await getLatLngByZipCode(shelterZipCode);
           }
-        }  
+        }
         // gets the distance between the given zip code and the shelter
         shelters[shelterID] = shelterLatLng ? getDistance(latLng, shelterLatLng) : null;
       }
@@ -168,11 +170,27 @@ const getPet = async (req, res, next) => {
 
 const deletePet = async (req, res, next) => {
   log.debug("Calling deletePet...");
+
+  //get image path
+  await getPetById(req.app.get('db'), req.params.petID)
+    .then((dbResponse) => {
+      if (dbResponse.length == 0) {
+        return res.status(404).json({ error: "Pet not found." });
+      }
+      removeImageFile(dbResponse[0].Picture)
+    })
+    .catch((e) => {
+      log.error(e);
+      res.status(500).json({ error: e.message });
+      next(e);
+    });
+
   await deletePetById(req.app.get('db'), req.params.petID)
     .then((dbResponse) => {
       if (dbResponse.affectedRows == 0) {
         return res.status(404).json({ error: "Pet not found." });
       }
+
       res.sendStatus(204);
     })
     .catch((e) => {
@@ -201,15 +219,21 @@ const patchPet = async (req, res, next) => {
 
   // verify that petID exists and get original values first
   await getPetById(req.app.get('db'), petID)
+  
     .then((dbResponse) => {
       if (dbResponse.length == 0) {
         return res.status(404).json({ error: "Pet not found." });
       }
+
+      let oldImagePath = dbResponse[0].Picture
       updatePetById(req.app.get('db'), petID, req.body, dbResponse[0])
         .then((dbResponse) => {
           if (dbResponse.affectedRows == 0) {
             return res.status(400).json({ error: "Bad request." });
           }
+          //delete old image path
+          if (oldImagePath !== req.body.picture) removeImageFile(oldImagePath)
+
           res.sendStatus(200);
         })
         .catch((e) => {
@@ -227,7 +251,7 @@ const patchPet = async (req, res, next) => {
 
 const getNews = async (req, res, next) => {
   log.debug("Calling getNews...");
-  await getAllNews(req.app.get('db'),req.query)
+  await getAllNews(req.app.get('db'), req.query)
     .then((dbResponse) => {
       res.send(dbResponse);
     })
@@ -243,7 +267,7 @@ const postPetNews = async (req, res, next) => {
 
   try {
     // check content type
-    if(!inputValidation.checkContentType(req, res)) throw new ContentTypeError();
+    if (!inputValidation.checkContentType(req, res)) throw new ContentTypeError();
     // check all attrs are provided (input validation)
     let errList = inputValidation.getMissingAttrs(res, req.body, ['newsItem'])
     if (errList.length != 0) throw new PropRequiredError(errList);
@@ -257,25 +281,25 @@ const postPetNews = async (req, res, next) => {
   // verify that petID exists first
   const { petID } = req.params;
   await getPetById(req.app.get('db'), petID)
-  .then((dbResponse) => {
-    if (dbResponse.length == 0) {
-      return res.status(404).json({ error: "Pet not found." });
-    }
-    createPetNews(req.app.get('db'), petID, req.body.newsItem)
-      .then((dbResponse) => {
-        res.status(201).send(dbResponse);
-      })
-      .catch((e) => {
-        log.error(e);
-        res.status(500).json({ error: e.message });
-        next(e);
-      });
-  })
-  .catch((e) => {
-    log.error(e);
-    res.status(500).json({ error: e.message });
-    next(e);
-  });
+    .then((dbResponse) => {
+      if (dbResponse.length == 0) {
+        return res.status(404).json({ error: "Pet not found." });
+      }
+      createPetNews(req.app.get('db'), petID, req.body.newsItem)
+        .then((dbResponse) => {
+          res.status(201).send(dbResponse);
+        })
+        .catch((e) => {
+          log.error(e);
+          res.status(500).json({ error: e.message });
+          next(e);
+        });
+    })
+    .catch((e) => {
+      log.error(e);
+      res.status(500).json({ error: e.message });
+      next(e);
+    });
 };
 
 const getPetNews = async (req, res, next) => {
@@ -283,25 +307,25 @@ const getPetNews = async (req, res, next) => {
   // verify that petID exists first
   const { petID } = req.params;
   await getPetById(req.app.get('db'), petID)
-  .then((dbResponse) => {
-    if (dbResponse.length == 0) {
-      return res.status(404).json({ error: "Pet not found." });
-    }
-    getPetNewsByPetId(req.app.get('db'), petID)
-      .then((dbResponse) => {
-        res.send(dbResponse);
-      })
-      .catch((e) => {
-        log.error(e);
-        res.status(500).json({ error: e.message });
-        next(e);
-      });
-  })
-  .catch((e) => {
-    log.error(e);
-    res.status(500).json({ error: e.message });
-    next(e);
-  });
+    .then((dbResponse) => {
+      if (dbResponse.length == 0) {
+        return res.status(404).json({ error: "Pet not found." });
+      }
+      getPetNewsByPetId(req.app.get('db'), petID)
+        .then((dbResponse) => {
+          res.send(dbResponse);
+        })
+        .catch((e) => {
+          log.error(e);
+          res.status(500).json({ error: e.message });
+          next(e);
+        });
+    })
+    .catch((e) => {
+      log.error(e);
+      res.status(500).json({ error: e.message });
+      next(e);
+    });
 };
 
 const deletePetNews = async (req, res, next) => {
@@ -309,28 +333,28 @@ const deletePetNews = async (req, res, next) => {
   // verify that petID exists first
   const { petID, newsItemID } = req.params;
   await getPetById(req.app.get('db'), petID)
-  .then((dbResponse) => {
-    if (dbResponse.length == 0) {
-      return res.status(404).json({ error: "Pet not found." });
-    }
-    deletePetNewsById(req.app.get('db'), newsItemID)
-      .then((dbResponse) => {
-        if (dbResponse.affectedRows == 0) {
-          return res.status(404).json({ error: "News item not found." });
-        }
-        res.sendStatus(204);
-      })
-      .catch((e) => {
-        log.error(e);
-        res.status(500).json({ error: e.message });
-        next(e);
-      });
-  })
-  .catch((e) => {
-    log.error(e);
-    res.status(500).json({ error: e.message });
-    next(e);
-  });
+    .then((dbResponse) => {
+      if (dbResponse.length == 0) {
+        return res.status(404).json({ error: "Pet not found." });
+      }
+      deletePetNewsById(req.app.get('db'), newsItemID)
+        .then((dbResponse) => {
+          if (dbResponse.affectedRows == 0) {
+            return res.status(404).json({ error: "News item not found." });
+          }
+          res.sendStatus(204);
+        })
+        .catch((e) => {
+          log.error(e);
+          res.status(500).json({ error: e.message });
+          next(e);
+        });
+    })
+    .catch((e) => {
+      log.error(e);
+      res.status(500).json({ error: e.message });
+      next(e);
+    });
 };
 
 const getBreeds = async (req, res, next) => {
@@ -346,6 +370,17 @@ const getBreeds = async (req, res, next) => {
     });
 };
 
+const removeImageFile = (path) => {
+  let fullpath = DIR + path.replace('images', '');
+  fs.unlink(fullpath, (err) => {
+    if (err) {
+      log.error(err)
+      return
+    }
+    log.debug("Image File is removed.")
+  })
+}
+
 module.exports = {
   getPets,
   postPet,
@@ -356,5 +391,6 @@ module.exports = {
   postPetNews,
   getPetNews,
   deletePetNews,
-  getBreeds
+  getBreeds,
+  removeImageFile
 };

@@ -1,5 +1,4 @@
 const multer = require('multer')
-const path = require('path');
 const { Logger } = require("../utils/log4js.js");
 const log = Logger();
 const DIR = './public/'
