@@ -60,7 +60,7 @@ class inputValidation {
    * @return {Array} return missing attributes
    */
   static getMissingAttrs(res, json, expected) {
-    
+
     let arr = JSON.parse(JSON.stringify(expected));
     Object.keys(json).forEach(function (key) {
       const index = arr.indexOf(key);

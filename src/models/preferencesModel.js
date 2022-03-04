@@ -53,7 +53,7 @@ const updatePreferences = async (db, userID, params) => {
     + 'MinAge = ?, MaxAge = ?, More = ? , Distance = ?, ZipCode = ? '
     + 'WHERE UserID = ?;'
 
-    // Since every input is optional, always change to null if applicable
+  // Since every input is optional, always change to null if applicable
   const values = [
     JSON.stringify(params.typeOfAnimal),
     JSON.stringify(params.breed),

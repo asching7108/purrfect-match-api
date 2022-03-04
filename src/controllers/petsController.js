@@ -21,7 +21,7 @@ const getLatLngByZipCode = async (zipCode) => {
 };
 
 const getBatchLatLng = async (list) => {
-  return (await geocoder.batchGeocode(list.map(address => { return { q: address, country: 'US' }})))
+  return (await geocoder.batchGeocode(list.map(address => { return { q: address, country: 'US' } })))
     .map(res => res.error ? '' : res.value[0]);
 };
 
@@ -79,7 +79,7 @@ const getPets = async (req, res, next) => {
       if (!distance || !zipCode) {
         return res.send(dbResponse);
       }
-      
+
       // gets the lat/lng location
       const latLng = await getLatLngByZipCode(zipCode);
 
@@ -102,7 +102,7 @@ const getPets = async (req, res, next) => {
           if (Number.isInteger(shelterZipCode)) {
             shelterLatLng = await getLatLngByZipCode(shelterZipCode);
           }
-        }  
+        }
         // gets the distance between the given zip code and the shelter
         shelters[shelterID] = shelterLatLng ? getDistance(latLng, shelterLatLng) : null;
       }
@@ -227,7 +227,7 @@ const patchPet = async (req, res, next) => {
 
 const getNews = async (req, res, next) => {
   log.debug("Calling getNews...");
-  await getAllNews(req.app.get('db'),req.query)
+  await getAllNews(req.app.get('db'), req.query)
     .then((dbResponse) => {
       res.send(dbResponse);
     })
@@ -243,7 +243,7 @@ const postPetNews = async (req, res, next) => {
 
   try {
     // check content type
-    if(!inputValidation.checkContentType(req, res)) throw new ContentTypeError();
+    if (!inputValidation.checkContentType(req, res)) throw new ContentTypeError();
     // check all attrs are provided (input validation)
     let errList = inputValidation.getMissingAttrs(res, req.body, ['newsItem'])
     if (errList.length != 0) throw new PropRequiredError(errList);
@@ -257,25 +257,25 @@ const postPetNews = async (req, res, next) => {
   // verify that petID exists first
   const { petID } = req.params;
   await getPetById(req.app.get('db'), petID)
-  .then((dbResponse) => {
-    if (dbResponse.length == 0) {
-      return res.status(404).json({ error: "Pet not found." });
-    }
-    createPetNews(req.app.get('db'), petID, req.body.newsItem)
-      .then((dbResponse) => {
-        res.status(201).send(dbResponse);
-      })
-      .catch((e) => {
-        log.error(e);
-        res.status(500).json({ error: e.message });
-        next(e);
-      });
-  })
-  .catch((e) => {
-    log.error(e);
-    res.status(500).json({ error: e.message });
-    next(e);
-  });
+    .then((dbResponse) => {
+      if (dbResponse.length == 0) {
+        return res.status(404).json({ error: "Pet not found." });
+      }
+      createPetNews(req.app.get('db'), petID, req.body.newsItem)
+        .then((dbResponse) => {
+          res.status(201).send(dbResponse);
+        })
+        .catch((e) => {
+          log.error(e);
+          res.status(500).json({ error: e.message });
+          next(e);
+        });
+    })
+    .catch((e) => {
+      log.error(e);
+      res.status(500).json({ error: e.message });
+      next(e);
+    });
 };
 
 const getPetNews = async (req, res, next) => {
@@ -283,25 +283,25 @@ const getPetNews = async (req, res, next) => {
   // verify that petID exists first
   const { petID } = req.params;
   await getPetById(req.app.get('db'), petID)
-  .then((dbResponse) => {
-    if (dbResponse.length == 0) {
-      return res.status(404).json({ error: "Pet not found." });
-    }
-    getPetNewsByPetId(req.app.get('db'), petID)
-      .then((dbResponse) => {
-        res.send(dbResponse);
-      })
-      .catch((e) => {
-        log.error(e);
-        res.status(500).json({ error: e.message });
-        next(e);
-      });
-  })
-  .catch((e) => {
-    log.error(e);
-    res.status(500).json({ error: e.message });
-    next(e);
-  });
+    .then((dbResponse) => {
+      if (dbResponse.length == 0) {
+        return res.status(404).json({ error: "Pet not found." });
+      }
+      getPetNewsByPetId(req.app.get('db'), petID)
+        .then((dbResponse) => {
+          res.send(dbResponse);
+        })
+        .catch((e) => {
+          log.error(e);
+          res.status(500).json({ error: e.message });
+          next(e);
+        });
+    })
+    .catch((e) => {
+      log.error(e);
+      res.status(500).json({ error: e.message });
+      next(e);
+    });
 };
 
 const deletePetNews = async (req, res, next) => {
@@ -309,28 +309,28 @@ const deletePetNews = async (req, res, next) => {
   // verify that petID exists first
   const { petID, newsItemID } = req.params;
   await getPetById(req.app.get('db'), petID)
-  .then((dbResponse) => {
-    if (dbResponse.length == 0) {
-      return res.status(404).json({ error: "Pet not found." });
-    }
-    deletePetNewsById(req.app.get('db'), newsItemID)
-      .then((dbResponse) => {
-        if (dbResponse.affectedRows == 0) {
-          return res.status(404).json({ error: "News item not found." });
-        }
-        res.sendStatus(204);
-      })
-      .catch((e) => {
-        log.error(e);
-        res.status(500).json({ error: e.message });
-        next(e);
-      });
-  })
-  .catch((e) => {
-    log.error(e);
-    res.status(500).json({ error: e.message });
-    next(e);
-  });
+    .then((dbResponse) => {
+      if (dbResponse.length == 0) {
+        return res.status(404).json({ error: "Pet not found." });
+      }
+      deletePetNewsById(req.app.get('db'), newsItemID)
+        .then((dbResponse) => {
+          if (dbResponse.affectedRows == 0) {
+            return res.status(404).json({ error: "News item not found." });
+          }
+          res.sendStatus(204);
+        })
+        .catch((e) => {
+          log.error(e);
+          res.status(500).json({ error: e.message });
+          next(e);
+        });
+    })
+    .catch((e) => {
+      log.error(e);
+      res.status(500).json({ error: e.message });
+      next(e);
+    });
 };
 
 const getBreeds = async (req, res, next) => {

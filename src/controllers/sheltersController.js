@@ -127,11 +127,9 @@ const getPets = async (req, res, next) => {
         next(e);
       });
   }
-
 };
 
 const loginShelter = async (req, res, next) => {
-
   // input validation
   let success = true;
   try {

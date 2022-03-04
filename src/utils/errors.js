@@ -8,24 +8,24 @@ class ValidationError extends Error {
     this.name = this.constructor.name
 
     if (this instanceof ContentTypeError) {
-      this.message  = 'Incorrect content-type.'
+      this.message = 'Incorrect content-type.'
       this.statusCode = 415
       log.debug('Content-type validation failed. Will return 415 Unsupported Media Type.');
       log.info('Error detail: ' + this.message);
     }
-    else if (this instanceof PropNullorEmptyError){
-      this.message  = '[' + errList + '] cannot be null or empty.'
+    else if (this instanceof PropNullorEmptyError) {
+      this.message = '[' + errList + '] cannot be null or empty.'
       this.statusCode = 400
       log.debug('Attribute values validation failed. Will return 400 Bad Request.');
       log.info('Error detail: ' + this.message);
     }
-    else if (this instanceof PropRequiredError){
-      this.message  = 'Missing required attributes = [' + errList +  ']'
+    else if (this instanceof PropRequiredError) {
+      this.message = 'Missing required attributes = [' + errList + ']'
       this.statusCode = 400
       log.debug('Required attributes validation failed. Will return 400 Bad Request.');
       log.info('Error detail: ' + this.message);
     }
-    else if (this instanceof AuthorizationError){
+    else if (this instanceof AuthorizationError) {
       this.message = 'Unauthorized request.'
       this.statusCode = 401;
       log.debug('Authorization failed. Will return 401 Unauthorized.');
@@ -38,7 +38,7 @@ class ValidationError extends Error {
 class ContentTypeError extends ValidationError { }
 class PropNullorEmptyError extends ValidationError { }
 class PropRequiredError extends ValidationError { }
-class AuthorizationError extends ValidationError{ }
+class AuthorizationError extends ValidationError { }
 
 module.exports = {
   ValidationError,

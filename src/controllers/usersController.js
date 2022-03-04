@@ -18,7 +18,6 @@ const jwt = require('jsonwebtoken');
 const { SECRET } = require('../config');
 const { isCorrectPassword } = require('../utils/auth');
 
-
 const postUsers = async (req, res, next) => {
   log.debug("Calling postUsers...Verifying user inputs...");
   let success = true;
@@ -116,17 +115,17 @@ const deleteUser = async (req, res, next) => {
 const putFavorite = async (req, res, next) => {
   log.debug("Calling putFavorite...");
 
-    // Ensure pet exists
-    const petsByID = await getPetById(req.app.get('db'), req.params.petID);
-    if (petsByID.length !== 1) return res.status(404).send({Error: 'Pet not found'});
-  
-    try {
-      const dbResponse = await addPetToFavorites(req.app.get('db'), req.params.userID, req.params.petID);
-      return res.status(201).send(dbResponse);
-    } catch (err) {
-      log.error(err);
-      return res.status(500).send({Error: 'Internal Server Error'});
-    }
+  // Ensure pet exists
+  const petsByID = await getPetById(req.app.get('db'), req.params.petID);
+  if (petsByID.length !== 1) return res.status(404).send({ Error: 'Pet not found' });
+
+  try {
+    const dbResponse = await addPetToFavorites(req.app.get('db'), req.params.userID, req.params.petID);
+    return res.status(201).send(dbResponse);
+  } catch (err) {
+    log.error(err);
+    return res.status(500).send({ Error: 'Internal Server Error' });
+  }
 }
 
 const getFavorites = async (req, res, next) => {
@@ -135,10 +134,10 @@ const getFavorites = async (req, res, next) => {
   try {
     const dbResponse = await getUserFavorites(req.app.get('db'), req.params.userID);
     // .map will return a simple list, instead of list of single-attribute objects
-    return res.status(200).send(dbResponse.map(elem => elem.PetID)); 
+    return res.status(200).send(dbResponse.map(elem => elem.PetID));
   } catch (err) {
     log.error(err);
-    return res.status(500).send({Error: 'Internal Server Error'});
+    return res.status(500).send({ Error: 'Internal Server Error' });
   }
 }
 
@@ -150,12 +149,11 @@ const deleteFavorite = async (req, res, next) => {
     return res.sendStatus(204);
   } catch (err) {
     log.error(err);
-    return res.status(500).send({Error: 'Internal Server Error'});
+    return res.status(500).send({ Error: 'Internal Server Error' });
   }
 }
 
 const loginUser = async (req, res, next) => {
-
   // input validation
   let success = true;
   try {
