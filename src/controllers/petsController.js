@@ -172,12 +172,13 @@ const deletePet = async (req, res, next) => {
   log.debug("Calling deletePet...");
 
   //get image path
+  let path;
   await getPetById(req.app.get('db'), req.params.petID)
     .then((dbResponse) => {
       if (dbResponse.length == 0) {
         return res.status(404).json({ error: "Pet not found." });
       }
-      removeImageFile(dbResponse[0].Picture)
+      path = dbResponse[0].Picture
     })
     .catch((e) => {
       log.error(e);
@@ -190,7 +191,7 @@ const deletePet = async (req, res, next) => {
       if (dbResponse.affectedRows == 0) {
         return res.status(404).json({ error: "Pet not found." });
       }
-
+      removeImageFile(path)
       res.sendStatus(204);
     })
     .catch((e) => {
@@ -219,7 +220,6 @@ const patchPet = async (req, res, next) => {
 
   // verify that petID exists and get original values first
   await getPetById(req.app.get('db'), petID)
-  
     .then((dbResponse) => {
       if (dbResponse.length == 0) {
         return res.status(404).json({ error: "Pet not found." });
