@@ -5,6 +5,8 @@ const { inputValidation } = require("../utils/tools.js");
 const { ContentTypeError, PropNullorEmptyError, PropRequiredError } = require("../utils/errors.js");
 const { Logger } = require("../utils/log4js.js");
 const log = Logger();
+const fs = require('fs')
+const DIR = './public/'
 
 const options = {
   provider: 'openstreetmap'
@@ -168,11 +170,28 @@ const getPet = async (req, res, next) => {
 
 const deletePet = async (req, res, next) => {
   log.debug("Calling deletePet...");
+
+  //get image path
+  let path;
+  await getPetById(req.app.get('db'), req.params.petID)
+    .then((dbResponse) => {
+      if (dbResponse.length == 0) {
+        return res.status(404).json({ error: "Pet not found." });
+      }
+      path = dbResponse[0].Picture
+    })
+    .catch((e) => {
+      log.error(e);
+      res.status(500).json({ error: e.message });
+      next(e);
+    });
+
   await deletePetById(req.app.get('db'), req.params.petID)
     .then((dbResponse) => {
       if (dbResponse.affectedRows == 0) {
         return res.status(404).json({ error: "Pet not found." });
       }
+      removeImageFile(path)
       res.sendStatus(204);
     })
     .catch((e) => {
@@ -205,11 +224,16 @@ const patchPet = async (req, res, next) => {
       if (dbResponse.length == 0) {
         return res.status(404).json({ error: "Pet not found." });
       }
+
+      let oldImagePath = dbResponse[0].Picture
       updatePetById(req.app.get('db'), petID, req.body, dbResponse[0])
         .then((dbResponse) => {
           if (dbResponse.affectedRows == 0) {
             return res.status(400).json({ error: "Bad request." });
           }
+          //delete old image path
+          if (oldImagePath !== req.body.picture) removeImageFile(oldImagePath)
+
           res.sendStatus(200);
         })
         .catch((e) => {
@@ -346,6 +370,17 @@ const getBreeds = async (req, res, next) => {
     });
 };
 
+const removeImageFile = (path) => {
+  let fullpath = DIR + path.replace('images', '');
+  fs.unlink(fullpath, (err) => {
+    if (err) {
+      log.error(err)
+      return
+    }
+    log.debug("Image File is removed.")
+  })
+}
+
 module.exports = {
   getPets,
   postPet,
@@ -356,5 +391,6 @@ module.exports = {
   postPetNews,
   getPetNews,
   deletePetNews,
-  getBreeds
+  getBreeds,
+  removeImageFile
 };
